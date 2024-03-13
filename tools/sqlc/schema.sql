@@ -1,13 +1,13 @@
 CREATE TYPE gender AS ENUM ('male', 'female');
 CREATE TABLE "actors" (
-  "id" serial,
+  "id" serial primary key,
   "name" varchar NOT NULL,
   "birthday" date NOT NULL,
   "gender" gender NOT NULL
 );
 
 CREATE TABLE "films" (
-  "id" serial,
+  "id" serial primary key,
   "title" varchar(150) NOT NULL,
   "description" varchar(1000) NOT NULL,
   "release_date" date NOT NULL,
