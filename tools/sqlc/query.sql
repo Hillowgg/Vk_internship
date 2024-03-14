@@ -1,15 +1,4 @@
 --ACTORS----------------------------------------------------------------------------------------------------------------
-CREATE FUNCTION search_actors_by_name(arg text)
-    returns table
-            (
-                id integer
-            )
-AS
-$$
-SELECT id
-FROM actors
-WHERE name @@ to_tsquery(arg || ':*')
-$$ LANGUAGE SQL;
 
 -- name: GetActorById :one
 SELECT *
