@@ -7,14 +7,113 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getAuthor = `-- name: GetAuthor :many
-SELECT id, name, birthday, gender FROM actors
+const addActor = `-- name: AddActor :exec
+INSERT INTO actors (name, birthday, gender)
+VALUES ($1, $2, $3)
 `
 
-func (q *Queries) GetAuthor(ctx context.Context) ([]Actor, error) {
-	rows, err := q.db.Query(ctx, getAuthor)
+type AddActorParams struct {
+	Name     string
+	Birthday pgtype.Date
+	Gender   Gender
+}
+
+func (q *Queries) AddActor(ctx context.Context, arg AddActorParams) error {
+	_, err := q.db.Exec(ctx, addActor, arg.Name, arg.Birthday, arg.Gender)
+	return err
+}
+
+const addFilm = `-- name: AddFilm :exec
+INSERT INTO films (title, description, release_date, rating)
+VALUES ($1, $2, $3, $3)
+`
+
+type AddFilmParams struct {
+	Title       string
+	Description string
+	ReleaseDate pgtype.Date
+}
+
+func (q *Queries) AddFilm(ctx context.Context, arg AddFilmParams) error {
+	_, err := q.db.Exec(ctx, addFilm, arg.Title, arg.Description, arg.ReleaseDate)
+	return err
+}
+
+const deleteActorById = `-- name: DeleteActorById :exec
+DELETE
+FROM actors
+WHERE id = $1
+`
+
+func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteActorById, id)
+	return err
+}
+
+const deleteFilmById = `-- name: DeleteFilmById :exec
+DELETE
+FROM films
+WHERE id = $1
+`
+
+func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteFilmById, id)
+	return err
+}
+
+const getActorById = `-- name: GetActorById :one
+
+SELECT id, name, birthday, gender
+FROM actors
+WHERE id = $1
+`
+
+// ACTORS----------------------------------------------------------------------------------------------------------------
+func (q *Queries) GetActorById(ctx context.Context, id int32) (Actor, error) {
+	row := q.db.QueryRow(ctx, getActorById, id)
+	var i Actor
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Birthday,
+		&i.Gender,
+	)
+	return i, err
+}
+
+const getFilmById = `-- name: GetFilmById :one
+
+SELECT id, title, description, release_date, rating
+FROM films
+WHERE id = $1
+`
+
+// FILMS-----------------------------------------------------------------------------------------------------------------
+func (q *Queries) GetFilmById(ctx context.Context, id int32) (Film, error) {
+	row := q.db.QueryRow(ctx, getFilmById, id)
+	var i Film
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.ReleaseDate,
+		&i.Rating,
+	)
+	return i, err
+}
+
+const searchActorsByName = `-- name: SearchActorsByName :many
+SELECT id, name, birthday, gender
+FROM actors
+WHERE name LIKE '%$1%'
+`
+
+func (q *Queries) SearchActorsByName(ctx context.Context) ([]Actor, error) {
+	rows, err := q.db.Query(ctx, searchActorsByName)
 	if err != nil {
 		return nil, err
 	}
@@ -36,4 +135,167 @@ func (q *Queries) GetAuthor(ctx context.Context) ([]Actor, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const searchFilmByTitleAndActor = `-- name: SearchFilmByTitleAndActor :one
+
+WITH ai AS (
+	SELECT id FROM actors where lower(name) LIKE lower('%$2%')
+), fi AS (
+	SELECT id FROM films WHERE lower(title) LIKE lower('%$1%')
+), f AS (
+	SELECT film_id FROM actors_films WHERE actor_id IN (select id from ai) AND film_id IN (SELECT id FROM fi)
+)
+SELECT (title, description, release_date, rating) FROM f JOIN films ON f.film_id = films.id
+`
+
+func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context) (interface{}, error) {
+	row := q.db.QueryRow(ctx, searchFilmByTitleAndActor)
+	var column_1 interface{}
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
+const searchFilmsByTitle = `-- name: SearchFilmsByTitle :many
+SELECT id, title, description, release_date, rating
+FROM films
+WHERE title LIKE '%$1%'
+`
+
+func (q *Queries) SearchFilmsByTitle(ctx context.Context) ([]Film, error) {
+	rows, err := q.db.Query(ctx, searchFilmsByTitle)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateActorBirthday = `-- name: updateActorBirthday :exec
+UPDATE actors
+SET birthday = $2
+WHERE id = $1
+`
+
+type updateActorBirthdayParams struct {
+	ID       int32
+	Birthday pgtype.Date
+}
+
+func (q *Queries) updateActorBirthday(ctx context.Context, arg updateActorBirthdayParams) error {
+	_, err := q.db.Exec(ctx, updateActorBirthday, arg.ID, arg.Birthday)
+	return err
+}
+
+const updateActorGender = `-- name: updateActorGender :exec
+UPDATE actors
+SET gender = $2
+WHERE id = $1
+`
+
+type updateActorGenderParams struct {
+	ID     int32
+	Gender Gender
+}
+
+func (q *Queries) updateActorGender(ctx context.Context, arg updateActorGenderParams) error {
+	_, err := q.db.Exec(ctx, updateActorGender, arg.ID, arg.Gender)
+	return err
+}
+
+const updateActorName = `-- name: updateActorName :exec
+UPDATE actors
+SET name = $2
+WHERE id = $1
+`
+
+type updateActorNameParams struct {
+	ID   int32
+	Name string
+}
+
+func (q *Queries) updateActorName(ctx context.Context, arg updateActorNameParams) error {
+	_, err := q.db.Exec(ctx, updateActorName, arg.ID, arg.Name)
+	return err
+}
+
+const updateFilmDescription = `-- name: updateFilmDescription :exec
+UPDATE films
+SET description = $2
+WHERE id = $1
+`
+
+type updateFilmDescriptionParams struct {
+	ID          int32
+	Description string
+}
+
+func (q *Queries) updateFilmDescription(ctx context.Context, arg updateFilmDescriptionParams) error {
+	_, err := q.db.Exec(ctx, updateFilmDescription, arg.ID, arg.Description)
+	return err
+}
+
+const updateFilmRating = `-- name: updateFilmRating :exec
+UPDATE films
+SET rating = $2
+WHERE id = $1
+`
+
+type updateFilmRatingParams struct {
+	ID     int32
+	Rating int16
+}
+
+func (q *Queries) updateFilmRating(ctx context.Context, arg updateFilmRatingParams) error {
+	_, err := q.db.Exec(ctx, updateFilmRating, arg.ID, arg.Rating)
+	return err
+}
+
+const updateFilmReleaseDate = `-- name: updateFilmReleaseDate :exec
+UPDATE films
+SET release_date = $2
+WHERE id = $1
+`
+
+type updateFilmReleaseDateParams struct {
+	ID          int32
+	ReleaseDate pgtype.Date
+}
+
+func (q *Queries) updateFilmReleaseDate(ctx context.Context, arg updateFilmReleaseDateParams) error {
+	_, err := q.db.Exec(ctx, updateFilmReleaseDate, arg.ID, arg.ReleaseDate)
+	return err
+}
+
+const updateFilmTitle = `-- name: updateFilmTitle :exec
+UPDATE films
+SET title = $2
+WHERE id = $1
+`
+
+type updateFilmTitleParams struct {
+	ID    int32
+	Title string
+}
+
+func (q *Queries) updateFilmTitle(ctx context.Context, arg updateFilmTitleParams) error {
+	_, err := q.db.Exec(ctx, updateFilmTitle, arg.ID, arg.Title)
+	return err
 }

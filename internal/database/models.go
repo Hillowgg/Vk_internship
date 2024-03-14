@@ -54,7 +54,7 @@ func (ns NullGender) Value() (driver.Value, error) {
 }
 
 type Actor struct {
-	ID       pgtype.Int4
+	ID       int32
 	Name     string
 	Birthday pgtype.Date
 	Gender   Gender
@@ -66,7 +66,7 @@ type ActorsFilm struct {
 }
 
 type Film struct {
-	ID          pgtype.Int4
+	ID          int32
 	Title       string
 	Description string
 	ReleaseDate pgtype.Date
