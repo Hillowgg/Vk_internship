@@ -22,15 +22,3 @@ CREATE TABLE "actors_films" (
 ALTER TABLE "actors_films" ADD FOREIGN KEY ("actor_id") REFERENCES "actors" ("id");
 
 ALTER TABLE "actors_films" ADD FOREIGN KEY ("film_id") REFERENCES "films" ("id");
-
-CREATE FUNCTION search_actors_by_name(arg text)
-    returns table
-            (
-                id integer
-            )
-AS
-$$
-SELECT id
-FROM actors
-WHERE name @@ to_tsquery(arg || ':*')
-$$ LANGUAGE SQL;
