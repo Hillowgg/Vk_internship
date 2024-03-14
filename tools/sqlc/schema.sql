@@ -11,7 +11,7 @@ CREATE TABLE "films" (
   "title" varchar(150) NOT NULL,
   "description" varchar(1000) NOT NULL,
   "release_date" date NOT NULL,
-  "rating" smallint NOT NULL
+  "rating" smallint NOT NULL CHECK(VALUE >= 0 AND VALUE < 100)
 );
 
 CREATE TABLE "actors_films" (
