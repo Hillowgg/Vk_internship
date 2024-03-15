@@ -26,7 +26,7 @@ func (s *Service) SearchFilms(ctx context.Context, title string) ([]*Film, error
         return nil, err
     }
     logs.Log.Infow("Found films", "info", title)
-    films := make([]*Film, len(dbFilms))
+    films := make([]*Film, 0, len(dbFilms))
     for _, film := range dbFilms {
         films = append(films, dbFilmToFilm(film))
     }

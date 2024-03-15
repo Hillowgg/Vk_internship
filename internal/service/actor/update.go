@@ -22,12 +22,12 @@ func (s *Service) AddActorToFilm(ctx context.Context, actorId, filmId int32) err
     return nil
 }
 
-func (s *Service) UpdateActor(ctx context.Context, id int32, actor database.OptUpdateActor) error {
+func (s *Service) UpdateActor(ctx context.Context, actor *database.OptUpdateActor) error {
     err := s.db.UpdateActor(ctx, actor)
     if err != nil {
-        logs.Log.Errorw("Failed to update actor", "actorId", id, "info", actor, "err", err)
+        logs.Log.Errorw("Failed to update actor", "actorId", actor.Id, "info", actor, "err", err)
         return err
     }
-    logs.Log.Infow("Updated actor", "actorId", id, "info", actor)
+    logs.Log.Infow("Updated actor", "actorId", actor.Id, "info", actor)
     return nil
 }
