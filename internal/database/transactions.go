@@ -65,3 +65,10 @@ func (q *Queries) UpdateFilm(ctx context.Context, film OptUpdateFilm) error {
     }
     return tx.Commit(ctx)
 }
+
+type OptUpdateActor struct {
+    Id       int32
+    Name     *string
+    Birthday *time.Time
+    Gender   *Gender
+}
