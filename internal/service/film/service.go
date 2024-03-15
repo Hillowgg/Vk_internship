@@ -4,6 +4,7 @@ import (
     "context"
 
     "main/internal/database"
+    "main/internal/logs"
 )
 
 type IService interface {
@@ -19,10 +20,12 @@ type IService interface {
 }
 
 type Service struct {
-    // maybe add db
     db *database.Queries
 }
 
 func NewService(db *database.Queries) (*Service, error) {
+    if db == nil {
+        logs.Log.Error("Failed to create Film service: db is nil")
+    }
     return &Service{db}, nil
 }
