@@ -19,12 +19,12 @@ type Querier interface {
 	// todo: fix deleting from actors_films
 	DeleteFilmById(ctx context.Context, id int32) error
 	//ACTORS----------------------------------------------------------------------------------------------------------------
-	GetActorById(ctx context.Context, id int32) (Actor, error)
+	GetActorById(ctx context.Context, id int32) (*Actor, error)
 	//FILMS-----------------------------------------------------------------------------------------------------------------
-	GetFilmById(ctx context.Context, id int32) (Film, error)
-	SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]Actor, error)
-	SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (Film, error)
-	SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]Film, error)
+	GetFilmById(ctx context.Context, id int32) (*Film, error)
+	SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]*Actor, error)
+	SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (*Film, error)
+	SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]*Film, error)
 	updateActorBirthday(ctx context.Context, arg updateActorBirthdayParams) error
 	updateActorGender(ctx context.Context, arg updateActorGenderParams) error
 	updateActorName(ctx context.Context, arg updateActorNameParams) error
@@ -32,6 +32,10 @@ type Querier interface {
 	updateFilmRating(ctx context.Context, arg updateFilmRatingParams) error
 	updateFilmReleaseDate(ctx context.Context, arg updateFilmReleaseDateParams) error
 	updateFilmTitle(ctx context.Context, arg updateFilmTitleParams) error
+
+	AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error
+	UpdateFilm(ctx context.Context, film OptUpdateFilm) error
+	UpdateActor(ctx context.Context, actor OptUpdateActor) error
 }
 
 var _ Querier = (*Queries)(nil)

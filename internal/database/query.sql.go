@@ -95,7 +95,7 @@ WHERE id = $1
 `
 
 // ACTORS----------------------------------------------------------------------------------------------------------------
-func (q *Queries) GetActorById(ctx context.Context, id int32) (Actor, error) {
+func (q *Queries) GetActorById(ctx context.Context, id int32) (*Actor, error) {
 	row := q.db.QueryRow(ctx, getActorById, id)
 	var i Actor
 	err := row.Scan(
@@ -104,7 +104,7 @@ func (q *Queries) GetActorById(ctx context.Context, id int32) (Actor, error) {
 		&i.Birthday,
 		&i.Gender,
 	)
-	return i, err
+	return &i, err
 }
 
 const getFilmById = `-- name: GetFilmById :one
@@ -115,7 +115,7 @@ WHERE id = $1
 `
 
 // FILMS-----------------------------------------------------------------------------------------------------------------
-func (q *Queries) GetFilmById(ctx context.Context, id int32) (Film, error) {
+func (q *Queries) GetFilmById(ctx context.Context, id int32) (*Film, error) {
 	row := q.db.QueryRow(ctx, getFilmById, id)
 	var i Film
 	err := row.Scan(
@@ -125,7 +125,7 @@ func (q *Queries) GetFilmById(ctx context.Context, id int32) (Film, error) {
 		&i.ReleaseDate,
 		&i.Rating,
 	)
-	return i, err
+	return &i, err
 }
 
 const searchActorsByName = `-- name: SearchActorsByName :many
@@ -134,13 +134,13 @@ FROM actors
 WHERE name LIKE '%' || $1 || '%'
 `
 
-func (q *Queries) SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]Actor, error) {
+func (q *Queries) SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]*Actor, error) {
 	rows, err := q.db.Query(ctx, searchActorsByName, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Actor
+	var items []*Actor
 	for rows.Next() {
 		var i Actor
 		if err := rows.Scan(
@@ -151,7 +151,7 @@ func (q *Queries) SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) 
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -176,7 +176,7 @@ type SearchFilmByTitleAndActorParams struct {
 	Column2 pgtype.Text
 }
 
-func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (Film, error) {
+func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (*Film, error) {
 	row := q.db.QueryRow(ctx, searchFilmByTitleAndActor, arg.Column1, arg.Column2)
 	var i Film
 	err := row.Scan(
@@ -186,7 +186,7 @@ func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmB
 		&i.ReleaseDate,
 		&i.Rating,
 	)
-	return i, err
+	return &i, err
 }
 
 const searchFilmsByTitle = `-- name: SearchFilmsByTitle :many
@@ -195,13 +195,13 @@ FROM films
 WHERE title LIKE '%' || $1 || '%'
 `
 
-func (q *Queries) SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]Film, error) {
+func (q *Queries) SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]*Film, error) {
 	rows, err := q.db.Query(ctx, searchFilmsByTitle, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Film
+	var items []*Film
 	for rows.Next() {
 		var i Film
 		if err := rows.Scan(
@@ -213,7 +213,7 @@ func (q *Queries) SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) 
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

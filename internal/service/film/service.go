@@ -8,9 +8,9 @@ import (
 )
 
 type IService interface {
-    GetFilm(ctx context.Context, id int32) (database.Film, error)
-    SearchFilms(ctx context.Context, title string) ([]database.Film, error)
-    SearchFilmByActor(ctx context.Context, title string, actorName string) (database.Film, error)
+    GetFilm(ctx context.Context, id int32) (*database.Film, error)
+    SearchFilms(ctx context.Context, title string) ([]*database.Film, error)
+    SearchFilmByActor(ctx context.Context, title string, actorName string) (*database.Film, error)
 
     CreateFilm(ctx context.Context, film database.AddFilmParams) (int32, error)
     CreateFilmWithActors(ctx context.Context, film database.AddFilmParams, actors []int32) error
