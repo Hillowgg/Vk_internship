@@ -13,7 +13,7 @@ type IService interface {
 
     CreateFilm(ctx context.Context, film database.AddFilmParams) (int32, error)
     CreateFilmWithActors(ctx context.Context, film database.AddFilmParams, actors []int32) error
-    UpdateFilm(ctx context.Context, id int32, newFilm database.OptUpdateFilm) error // todo: think of update data
+    UpdateFilm(ctx context.Context, id int32, newFilm database.OptUpdateFilm) error
 
     DeleteFilm(ctx context.Context, id int32) error
 }
