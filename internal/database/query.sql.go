@@ -95,30 +95,25 @@ func (q *Queries) AddUser(ctx context.Context, arg *AddUserParams) error {
 }
 
 const deleteActorById = `-- name: DeleteActorById :exec
-DELETE
-FROM actors
-WHERE id = $1
+BEGIN
 `
 
-// todo: fix deleting from actors_films
-func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteActorById, id)
+func (q *Queries) DeleteActorById(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, deleteActorById)
 	return err
 }
 
 const deleteFilmById = `-- name: DeleteFilmById :exec
-DELETE
-FROM films
-WHERE id = $1
+BEGIN
 `
 
-// todo: fix deleting from actors_films
-func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteFilmById, id)
+func (q *Queries) DeleteFilmById(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, deleteFilmById)
 	return err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
+
 DELETE FROM users WHERE id=$1
 `
 

@@ -33,11 +33,11 @@ UPDATE actors
 SET gender = $2
 WHERE id = $1;
 
--- todo: fix deleting from actors_films
 -- name: DeleteActorById :exec
-DELETE
-FROM actors
-WHERE id = $1;
+BEGIN;
+DELETE FROM actors_films WHERE actor_id = $1;
+DELETE FROM actors WHERE id = $1;
+COMMIT;
 
 
 --FILMS-----------------------------------------------------------------------------------------------------------------
@@ -89,11 +89,13 @@ UPDATE films
 SET rating = $2
 WHERE id = $1;
 
--- todo: fix deleting from actors_films
 -- name: DeleteFilmById :exec
+BEGIN;
+DELETE FROM actors_films WHERE film_id = $1;
 DELETE
 FROM films
 WHERE id = $1;
+COMMIT;
 
 --USERS-----------------------------------------------------------------------------------------------------------------
 
@@ -110,4 +112,5 @@ SELECT * FROM users WHERE email=$1;
 INSERT INTO users (id, nickname, email, password_hash, salt, is_admin) VALUES ($1, $2, $3, $4, $5, $6);
 
 -- name: DeleteUser :exec
+
 DELETE FROM users WHERE id=$1;

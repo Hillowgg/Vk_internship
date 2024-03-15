@@ -15,10 +15,8 @@ type Querier interface {
 	AddActorToFilm(ctx context.Context, arg *AddActorToFilmParams) error
 	AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error)
 	AddUser(ctx context.Context, arg *AddUserParams) error
-	// todo: fix deleting from actors_films
-	DeleteActorById(ctx context.Context, id int32) error
-	// todo: fix deleting from actors_films
-	DeleteFilmById(ctx context.Context, id int32) error
+	DeleteActorById(ctx context.Context) error
+	DeleteFilmById(ctx context.Context) error
 	DeleteUser(ctx context.Context, id pgtype.UUID) error
 	//ACTORS----------------------------------------------------------------------------------------------------------------
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
