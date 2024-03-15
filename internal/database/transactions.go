@@ -10,9 +10,9 @@ import (
 
 type QuerierWithTx interface {
     Querier
-    AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error
-    UpdateFilm(ctx context.Context, film OptUpdateFilm) error
-    UpdateActor(ctx context.Context, actor OptUpdateActor) error
+    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
+    UpdateFilm(ctx context.Context, film *OptUpdateFilm) error
+    UpdateActor(ctx context.Context, actor *OptUpdateActor) error
 }
 
 func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error {
@@ -44,7 +44,7 @@ type OptUpdateFilm struct {
     Rating      *uint8
 }
 
-func (q *Queries) UpdateFilm(ctx context.Context, film OptUpdateFilm) error {
+func (q *Queries) UpdateFilm(ctx context.Context, film *OptUpdateFilm) error {
     conn := q.db.(*pgx.Conn)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
@@ -80,7 +80,7 @@ type OptUpdateActor struct {
     Gender   *Gender
 }
 
-func (q *Queries) UpdateActor(ctx context.Context, actor OptUpdateActor) error {
+func (q *Queries) UpdateActor(ctx context.Context, actor *OptUpdateActor) error {
     conn := q.db.(*pgx.Conn)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
