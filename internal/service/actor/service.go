@@ -4,6 +4,7 @@ import (
     "context"
 
     "main/internal/database"
+    "main/internal/logs"
 )
 
 type IService interface {
@@ -23,5 +24,8 @@ type Service struct {
 }
 
 func NewService(db *database.Queries) *Service {
+    if db == nil {
+        logs.Log.Fatal("Failed to create service: db is nil")
+    }
     return &Service{db: db}
 }
