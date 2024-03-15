@@ -46,7 +46,7 @@ func (q *Queries) AddActorToFilm(ctx context.Context, arg *AddActorToFilmParams)
 
 const addFilm = `-- name: AddFilm :one
 INSERT INTO films (title, description, release_date, rating)
-VALUES ($1, $2, $3, $3)
+VALUES ($1, $2, $3, $4)
 RETURNING id
 `
 
@@ -54,10 +54,16 @@ type AddFilmParams struct {
 	Title       string
 	Description string
 	ReleaseDate pgtype.Date
+	Rating      int16
 }
 
 func (q *Queries) AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error) {
-	row := q.db.QueryRow(ctx, addFilm, arg.Title, arg.Description, arg.ReleaseDate)
+	row := q.db.QueryRow(ctx, addFilm,
+		arg.Title,
+		arg.Description,
+		arg.ReleaseDate,
+		arg.Rating,
+	)
 	var id int32
 	err := row.Scan(&id)
 	return id, err

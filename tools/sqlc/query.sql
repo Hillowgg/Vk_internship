@@ -66,7 +66,7 @@ SELECT id, title, description, release_date, rating FROM f JOIN films ON f.film_
 
 -- name: AddFilm :one
 INSERT INTO films (title, description, release_date, rating)
-VALUES ($1, $2, $3, $3)
+VALUES ($1, $2, $3, $4)
 RETURNING id;
 
 -- name: updateFilmTitle :exec
