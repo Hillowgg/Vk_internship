@@ -63,6 +63,31 @@ func (q *Queries) AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error
 	return id, err
 }
 
+const addUser = `-- name: AddUser :exec
+INSERT INTO users (id, nickname, email, password_hash, salt, is_admin) VALUES ($1, $2, $3, $4, $5, $6)
+`
+
+type AddUserParams struct {
+	ID           pgtype.UUID
+	Nickname     string
+	Email        string
+	PasswordHash pgtype.Text
+	Salt         pgtype.Text
+	IsAdmin      pgtype.Bool
+}
+
+func (q *Queries) AddUser(ctx context.Context, arg *AddUserParams) error {
+	_, err := q.db.Exec(ctx, addUser,
+		arg.ID,
+		arg.Nickname,
+		arg.Email,
+		arg.PasswordHash,
+		arg.Salt,
+		arg.IsAdmin,
+	)
+	return err
+}
+
 const deleteActorById = `-- name: DeleteActorById :exec
 DELETE
 FROM actors
@@ -84,6 +109,15 @@ WHERE id = $1
 // todo: fix deleting from actors_films
 func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, deleteFilmById, id)
+	return err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users WHERE id=$1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
 
@@ -124,6 +158,26 @@ func (q *Queries) GetFilmById(ctx context.Context, id int32) (*Film, error) {
 		&i.Description,
 		&i.ReleaseDate,
 		&i.Rating,
+	)
+	return &i, err
+}
+
+const getUserById = `-- name: GetUserById :one
+
+SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE id=$1
+`
+
+// USERS-----------------------------------------------------------------------------------------------------------------
+func (q *Queries) GetUserById(ctx context.Context, id pgtype.UUID) (*User, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Nickname,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Salt,
+		&i.IsAdmin,
 	)
 	return &i, err
 }

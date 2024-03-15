@@ -72,3 +72,12 @@ type Film struct {
 	ReleaseDate pgtype.Date
 	Rating      int16
 }
+
+type User struct {
+	ID           pgtype.UUID
+	Nickname     string
+	Email        string
+	PasswordHash pgtype.Text
+	Salt         pgtype.Text
+	IsAdmin      pgtype.Bool
+}

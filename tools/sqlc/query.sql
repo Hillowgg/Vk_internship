@@ -94,3 +94,14 @@ WHERE id = $1;
 DELETE
 FROM films
 WHERE id = $1;
+
+--USERS-----------------------------------------------------------------------------------------------------------------
+
+-- name: GetUserById :one
+SELECT * FROM users WHERE id=$1;
+
+-- name: AddUser :exec
+INSERT INTO users (id, nickname, email, password_hash, salt, is_admin) VALUES ($1, $2, $3, $4, $5, $6);
+
+-- name: DeleteUser :exec
+DELETE FROM users WHERE id=$1;

@@ -14,14 +14,18 @@ type Querier interface {
 	AddActor(ctx context.Context, arg *AddActorParams) (int32, error)
 	AddActorToFilm(ctx context.Context, arg *AddActorToFilmParams) error
 	AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error)
+	AddUser(ctx context.Context, arg *AddUserParams) error
 	// todo: fix deleting from actors_films
 	DeleteActorById(ctx context.Context, id int32) error
 	// todo: fix deleting from actors_films
 	DeleteFilmById(ctx context.Context, id int32) error
+	DeleteUser(ctx context.Context, id pgtype.UUID) error
 	//ACTORS----------------------------------------------------------------------------------------------------------------
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
 	//FILMS-----------------------------------------------------------------------------------------------------------------
 	GetFilmById(ctx context.Context, id int32) (*Film, error)
+	//USERS-----------------------------------------------------------------------------------------------------------------
+	GetUserById(ctx context.Context, id pgtype.UUID) (*User, error)
 	SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]*Actor, error)
 	SearchFilmByTitleAndActor(ctx context.Context, arg *SearchFilmByTitleAndActorParams) (*Film, error)
 	SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]*Film, error)
