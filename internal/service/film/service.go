@@ -2,19 +2,34 @@ package film
 
 import (
     "context"
+    "time"
 
     "main/internal/database"
     "main/internal/logs"
 )
 
-type IService interface {
-    GetFilm(ctx context.Context, id int32) (*database.Film, error)
-    SearchFilms(ctx context.Context, title string) ([]*database.Film, error)
-    SearchFilmByActor(ctx context.Context, title string, actorName string) (*database.Film, error)
+type Film struct {
+    Id          int32
+    Title       string
+    Description string
+    ReleaseDate time.Time
+    Rating      int8
+}
 
-    CreateFilm(ctx context.Context, film database.AddFilmParams) (int32, error)
-    CreateFilmWithActors(ctx context.Context, film database.AddFilmParams, actors []int32) error
-    UpdateFilm(ctx context.Context, id int32, newFilm database.OptUpdateFilm) error
+type NewFilm struct {
+    Title       string
+    Description string
+    ReleaseDate time.Time
+    Rating      int8
+}
+type IService interface {
+    GetFilm(ctx context.Context, id int32) (*Film, error)
+    SearchFilms(ctx context.Context, title string) ([]*Film, error)
+    SearchFilmByActor(ctx context.Context, title string, actorName string) (*Film, error)
+
+    CreateFilm(ctx context.Context, film *NewFilm) (int32, error)
+    CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) error
+    UpdateFilm(ctx context.Context, film *database.OptUpdateFilm) error
 
     DeleteFilm(ctx context.Context, id int32) error
 }
