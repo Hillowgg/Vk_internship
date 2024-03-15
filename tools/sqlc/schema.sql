@@ -22,3 +22,7 @@ CREATE TABLE "actors_films" (
 ALTER TABLE "actors_films" ADD FOREIGN KEY ("actor_id") REFERENCES "actors" ("id");
 
 ALTER TABLE "actors_films" ADD FOREIGN KEY ("film_id") REFERENCES "films" ("id");
+
+-- CREATE TABLE "users" (
+--     "id" uuid
+-- );

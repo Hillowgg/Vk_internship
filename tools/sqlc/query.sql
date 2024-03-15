@@ -8,9 +8,9 @@ WHERE id = $1;
 -- name: SearchActorsByName :many
 SELECT *
 FROM actors
-WHERE name LIKE '%$1%';
+WHERE name LIKE '%' || $1 || '%';
 
--- name: AddActor :exec
+-- name: AddActor :one
 INSERT INTO actors (name, birthday, gender)
 VALUES ($1, $2, $3)
 RETURNING id;
@@ -33,6 +33,7 @@ UPDATE actors
 SET gender = $2
 WHERE id = $1;
 
+-- todo: fix deleting from actors_films
 -- name: DeleteActorById :exec
 DELETE
 FROM actors
@@ -88,6 +89,7 @@ UPDATE films
 SET rating = $2
 WHERE id = $1;
 
+-- todo: fix deleting from actors_films
 -- name: DeleteFilmById :exec
 DELETE
 FROM films
