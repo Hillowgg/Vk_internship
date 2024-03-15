@@ -34,3 +34,8 @@ func generateHashedPassword(pass string) (string, string, error) {
     hash := hashPassword(pass, salt)
     return hash, string(salt), err
 }
+
+func checkPassword(pass, salt, hash string) bool {
+    right := hashPassword(pass, []byte(salt))
+    return hash == right
+}

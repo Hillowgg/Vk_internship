@@ -8,7 +8,7 @@ import (
     "main/internal/logs"
 )
 
-func (s Service) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (s *Service) DeleteUser(ctx context.Context, id uuid.UUID) error {
     bytes := [16]byte(id)
     err := s.db.DeleteUser(ctx, pgtype.UUID{Bytes: bytes, Valid: true})
     if err != nil {

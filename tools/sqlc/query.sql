@@ -100,6 +100,12 @@ WHERE id = $1;
 -- name: GetUserById :one
 SELECT * FROM users WHERE id=$1;
 
+-- name: GetUserByLogin :one
+SELECT * FROM users WHERE nickname=$1;
+
+-- name: GetUserByEmail :one
+SELECT * FROM users WHERE email=$1;
+
 -- name: AddUser :exec
 INSERT INTO users (id, nickname, email, password_hash, salt, is_admin) VALUES ($1, $2, $3, $4, $5, $6);
 

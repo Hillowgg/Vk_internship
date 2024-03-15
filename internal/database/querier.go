@@ -24,8 +24,10 @@ type Querier interface {
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
 	//FILMS-----------------------------------------------------------------------------------------------------------------
 	GetFilmById(ctx context.Context, id int32) (*Film, error)
+	GetUserByEmail(ctx context.Context, email string) (*User, error)
 	//USERS-----------------------------------------------------------------------------------------------------------------
 	GetUserById(ctx context.Context, id pgtype.UUID) (*User, error)
+	GetUserByLogin(ctx context.Context, nickname string) (*User, error)
 	SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]*Actor, error)
 	SearchFilmByTitleAndActor(ctx context.Context, arg *SearchFilmByTitleAndActorParams) (*Film, error)
 	SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]*Film, error)

@@ -26,6 +26,8 @@ type NewUser struct {
 type IService interface {
     GetUser(ctx context.Context, id uuid.UUID) (*User, error)
     IsUserAdmin(ctx context.Context, id uuid.UUID) (bool, error)
+    CheckEmailCredentials(ctx context.Context, email, password string) (*User, error)
+    CheckLoginCredentials(ctx context.Context, login, password string) (*User, error)
 
     CreateUser(ctx context.Context, user *NewUser) (uuid.UUID, error)
 

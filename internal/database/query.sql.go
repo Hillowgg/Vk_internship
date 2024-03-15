@@ -168,6 +168,24 @@ func (q *Queries) GetFilmById(ctx context.Context, id int32) (*Film, error) {
 	return &i, err
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE email=$1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (*User, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Nickname,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Salt,
+		&i.IsAdmin,
+	)
+	return &i, err
+}
+
 const getUserById = `-- name: GetUserById :one
 
 SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE id=$1
@@ -176,6 +194,24 @@ SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE id=$1
 // USERS-----------------------------------------------------------------------------------------------------------------
 func (q *Queries) GetUserById(ctx context.Context, id pgtype.UUID) (*User, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Nickname,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Salt,
+		&i.IsAdmin,
+	)
+	return &i, err
+}
+
+const getUserByLogin = `-- name: GetUserByLogin :one
+SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE nickname=$1
+`
+
+func (q *Queries) GetUserByLogin(ctx context.Context, nickname string) (*User, error) {
+	row := q.db.QueryRow(ctx, getUserByLogin, nickname)
 	var i User
 	err := row.Scan(
 		&i.ID,

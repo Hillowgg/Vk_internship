@@ -9,7 +9,7 @@ import (
     "main/internal/logs"
 )
 
-func (s Service) CreateUser(ctx context.Context, user *NewUser) (uuid.UUID, error) {
+func (s *Service) CreateUser(ctx context.Context, user *NewUser) (uuid.UUID, error) {
     id := uuid.New()
     hash, salt, err := generateHashedPassword(user.Password)
     if err != nil {
