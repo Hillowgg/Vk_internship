@@ -8,11 +8,26 @@ import (
     "main/internal/logs"
 )
 
+type User struct {
+    Id       uuid.UUID
+    Nickname string
+    Email    string
+    Password string
+    IsAdmin  bool
+}
+
+type NewUser struct {
+    Nickname string
+    Email    string
+    Password string
+    IsAdmin  bool
+}
+
 type IService interface {
-    GetUser(ctx context.Context, id uuid.UUID) (*database.User, error)
+    GetUser(ctx context.Context, id uuid.UUID) (*User, error)
     IsUserAdmin(ctx context.Context, id uuid.UUID) (bool, error)
 
-    CreateUser(ctx context.Context, user *database.AddUserParams) error
+    CreateUser(ctx context.Context, user *NewUser) (uuid.UUID, error)
 
     DeleteUser(ctx context.Context, id uuid.UUID) error
 }
