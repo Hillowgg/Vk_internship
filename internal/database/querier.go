@@ -32,10 +32,6 @@ type Querier interface {
 	updateFilmRating(ctx context.Context, arg updateFilmRatingParams) error
 	updateFilmReleaseDate(ctx context.Context, arg updateFilmReleaseDateParams) error
 	updateFilmTitle(ctx context.Context, arg updateFilmTitleParams) error
-
-	AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error
-	UpdateFilm(ctx context.Context, film OptUpdateFilm) error
-	UpdateActor(ctx context.Context, actor OptUpdateActor) error
 }
 
 var _ Querier = (*Queries)(nil)

@@ -8,6 +8,13 @@ import (
     "github.com/jackc/pgx/v5/pgtype"
 )
 
+type QuerierWithTx interface {
+    Querier
+    AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error
+    UpdateFilm(ctx context.Context, film OptUpdateFilm) error
+    UpdateActor(ctx context.Context, actor OptUpdateActor) error
+}
+
 func (q *Queries) AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error {
     conn := q.db.(*pgx.Conn)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})

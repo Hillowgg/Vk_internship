@@ -20,10 +20,10 @@ type IService interface {
 }
 
 type Service struct {
-    db database.Querier
+    db database.QuerierWithTx
 }
 
-func NewService(db database.Querier) (*Service, error) {
+func NewService(db database.QuerierWithTx) (*Service, error) {
     if db == nil {
         logs.Log.Error("Failed to create Film service: db is nil")
     }

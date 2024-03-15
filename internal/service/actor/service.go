@@ -20,10 +20,10 @@ type IService interface {
 }
 
 type Service struct {
-    db database.Querier
+    db database.QuerierWithTx
 }
 
-func NewService(db database.Querier) *Service {
+func NewService(db database.QuerierWithTx) *Service {
     if db == nil {
         logs.Log.Fatal("Failed to create service: db is nil")
     }
