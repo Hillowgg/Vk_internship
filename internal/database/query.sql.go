@@ -27,9 +27,24 @@ func (q *Queries) AddActor(ctx context.Context, arg AddActorParams) error {
 	return err
 }
 
-const addFilm = `-- name: AddFilm :exec
+const addActorToFilm = `-- name: AddActorToFilm :exec
+INSERT INTO actors_films(actor_id, film_id) VALUES ($1, $2)
+`
+
+type AddActorToFilmParams struct {
+	ActorID int32
+	FilmID  int32
+}
+
+func (q *Queries) AddActorToFilm(ctx context.Context, arg AddActorToFilmParams) error {
+	_, err := q.db.Exec(ctx, addActorToFilm, arg.ActorID, arg.FilmID)
+	return err
+}
+
+const addFilm = `-- name: AddFilm :one
 INSERT INTO films (title, description, release_date, rating)
 VALUES ($1, $2, $3, $3)
+RETURNING id
 `
 
 type AddFilmParams struct {
@@ -38,9 +53,11 @@ type AddFilmParams struct {
 	ReleaseDate pgtype.Date
 }
 
-func (q *Queries) AddFilm(ctx context.Context, arg AddFilmParams) error {
-	_, err := q.db.Exec(ctx, addFilm, arg.Title, arg.Description, arg.ReleaseDate)
-	return err
+func (q *Queries) AddFilm(ctx context.Context, arg AddFilmParams) (int32, error) {
+	row := q.db.QueryRow(ctx, addFilm, arg.Title, arg.Description, arg.ReleaseDate)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteActorById = `-- name: DeleteActorById :exec
