@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Service) AddActorToFilm(ctx context.Context, actorId, filmId int32) error {
-    err := s.db.AddActorToFilm(ctx, database.AddActorToFilmParams{ActorID: actorId, FilmID: filmId})
+    err := s.db.AddActorToFilm(ctx, &database.AddActorToFilmParams{ActorID: actorId, FilmID: filmId})
     if err != nil {
         logs.Log.Errorw(
             "Failed to add actor to film",

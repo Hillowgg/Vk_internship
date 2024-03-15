@@ -31,7 +31,7 @@ func (s *Service) SearchFilms(ctx context.Context, title string) ([]*database.Fi
 func (s *Service) SearchFilmByActor(ctx context.Context, title string, actorName string) (*database.Film, error) {
     film, err := s.db.SearchFilmByTitleAndActor(
         ctx,
-        database.SearchFilmByTitleAndActorParams{
+        &database.SearchFilmByTitleAndActorParams{
             Column1: pgtype.Text{String: title, Valid: true},
             Column2: pgtype.Text{String: actorName, Valid: true},
         })

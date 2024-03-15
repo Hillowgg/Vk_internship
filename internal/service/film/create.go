@@ -7,7 +7,7 @@ import (
     "main/internal/logs"
 )
 
-func (s *Service) CreateFilm(ctx context.Context, film database.AddFilmParams) (int32, error) {
+func (s *Service) CreateFilm(ctx context.Context, film *database.AddFilmParams) (int32, error) {
     id, err := s.db.AddFilm(ctx, film)
     if err != nil {
         logs.Log.Errorw("Failed to create film", "info", film, "err", err)

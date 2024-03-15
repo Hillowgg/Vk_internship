@@ -7,7 +7,7 @@ import (
     "main/internal/logs"
 )
 
-func (s *Service) CreateActor(ctx context.Context, actor database.AddActorParams) (int32, error) {
+func (s *Service) CreateActor(ctx context.Context, actor *database.AddActorParams) (int32, error) {
     id, err := s.db.AddActor(ctx, actor)
     if err != nil {
         logs.Log.Errorw("Failed to create an actor", "info", actor, "err", err)

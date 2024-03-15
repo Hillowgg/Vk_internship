@@ -9,7 +9,8 @@
         "out": "../../internal/database",
         "sql_package": "pgx/v5",
         "emit_interface": true,
-        "emit_result_struct_pointers": true
+        "emit_result_struct_pointers": true,
+        "emit_params_struct_pointers": true
       }
     }
   }]

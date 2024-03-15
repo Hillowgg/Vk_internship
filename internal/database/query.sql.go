@@ -23,7 +23,7 @@ type AddActorParams struct {
 	Gender   Gender
 }
 
-func (q *Queries) AddActor(ctx context.Context, arg AddActorParams) (int32, error) {
+func (q *Queries) AddActor(ctx context.Context, arg *AddActorParams) (int32, error) {
 	row := q.db.QueryRow(ctx, addActor, arg.Name, arg.Birthday, arg.Gender)
 	var id int32
 	err := row.Scan(&id)
@@ -39,7 +39,7 @@ type AddActorToFilmParams struct {
 	FilmID  int32
 }
 
-func (q *Queries) AddActorToFilm(ctx context.Context, arg AddActorToFilmParams) error {
+func (q *Queries) AddActorToFilm(ctx context.Context, arg *AddActorToFilmParams) error {
 	_, err := q.db.Exec(ctx, addActorToFilm, arg.ActorID, arg.FilmID)
 	return err
 }
@@ -56,7 +56,7 @@ type AddFilmParams struct {
 	ReleaseDate pgtype.Date
 }
 
-func (q *Queries) AddFilm(ctx context.Context, arg AddFilmParams) (int32, error) {
+func (q *Queries) AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error) {
 	row := q.db.QueryRow(ctx, addFilm, arg.Title, arg.Description, arg.ReleaseDate)
 	var id int32
 	err := row.Scan(&id)
@@ -176,7 +176,7 @@ type SearchFilmByTitleAndActorParams struct {
 	Column2 pgtype.Text
 }
 
-func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (*Film, error) {
+func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg *SearchFilmByTitleAndActorParams) (*Film, error) {
 	row := q.db.QueryRow(ctx, searchFilmByTitleAndActor, arg.Column1, arg.Column2)
 	var i Film
 	err := row.Scan(
@@ -232,7 +232,7 @@ type updateActorBirthdayParams struct {
 	Birthday pgtype.Date
 }
 
-func (q *Queries) updateActorBirthday(ctx context.Context, arg updateActorBirthdayParams) error {
+func (q *Queries) updateActorBirthday(ctx context.Context, arg *updateActorBirthdayParams) error {
 	_, err := q.db.Exec(ctx, updateActorBirthday, arg.ID, arg.Birthday)
 	return err
 }
@@ -248,7 +248,7 @@ type updateActorGenderParams struct {
 	Gender Gender
 }
 
-func (q *Queries) updateActorGender(ctx context.Context, arg updateActorGenderParams) error {
+func (q *Queries) updateActorGender(ctx context.Context, arg *updateActorGenderParams) error {
 	_, err := q.db.Exec(ctx, updateActorGender, arg.ID, arg.Gender)
 	return err
 }
@@ -264,7 +264,7 @@ type updateActorNameParams struct {
 	Name string
 }
 
-func (q *Queries) updateActorName(ctx context.Context, arg updateActorNameParams) error {
+func (q *Queries) updateActorName(ctx context.Context, arg *updateActorNameParams) error {
 	_, err := q.db.Exec(ctx, updateActorName, arg.ID, arg.Name)
 	return err
 }
@@ -280,7 +280,7 @@ type updateFilmDescriptionParams struct {
 	Description string
 }
 
-func (q *Queries) updateFilmDescription(ctx context.Context, arg updateFilmDescriptionParams) error {
+func (q *Queries) updateFilmDescription(ctx context.Context, arg *updateFilmDescriptionParams) error {
 	_, err := q.db.Exec(ctx, updateFilmDescription, arg.ID, arg.Description)
 	return err
 }
@@ -296,7 +296,7 @@ type updateFilmRatingParams struct {
 	Rating int16
 }
 
-func (q *Queries) updateFilmRating(ctx context.Context, arg updateFilmRatingParams) error {
+func (q *Queries) updateFilmRating(ctx context.Context, arg *updateFilmRatingParams) error {
 	_, err := q.db.Exec(ctx, updateFilmRating, arg.ID, arg.Rating)
 	return err
 }
@@ -312,7 +312,7 @@ type updateFilmReleaseDateParams struct {
 	ReleaseDate pgtype.Date
 }
 
-func (q *Queries) updateFilmReleaseDate(ctx context.Context, arg updateFilmReleaseDateParams) error {
+func (q *Queries) updateFilmReleaseDate(ctx context.Context, arg *updateFilmReleaseDateParams) error {
 	_, err := q.db.Exec(ctx, updateFilmReleaseDate, arg.ID, arg.ReleaseDate)
 	return err
 }
@@ -328,7 +328,7 @@ type updateFilmTitleParams struct {
 	Title string
 }
 
-func (q *Queries) updateFilmTitle(ctx context.Context, arg updateFilmTitleParams) error {
+func (q *Queries) updateFilmTitle(ctx context.Context, arg *updateFilmTitleParams) error {
 	_, err := q.db.Exec(ctx, updateFilmTitle, arg.ID, arg.Title)
 	return err
 }

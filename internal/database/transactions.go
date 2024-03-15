@@ -15,7 +15,7 @@ type QuerierWithTx interface {
     UpdateActor(ctx context.Context, actor OptUpdateActor) error
 }
 
-func (q *Queries) AddFilmWithActors(ctx context.Context, film AddFilmParams, ids []int32) error {
+func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error {
     conn := q.db.(*pgx.Conn)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
@@ -28,7 +28,7 @@ func (q *Queries) AddFilmWithActors(ctx context.Context, film AddFilmParams, ids
         return err
     }
     for _, id := range ids {
-        err = qtx.AddActorToFilm(ctx, AddActorToFilmParams{id, filmId})
+        err = qtx.AddActorToFilm(ctx, &AddActorToFilmParams{id, filmId})
         if err != nil {
             return err
         }
@@ -54,14 +54,14 @@ func (q *Queries) UpdateFilm(ctx context.Context, film OptUpdateFilm) error {
     qtx := q.WithTx(tx)
 
     if film.Title != nil {
-        err = qtx.updateFilmTitle(ctx, updateFilmTitleParams{film.Id, *film.Title})
+        err = qtx.updateFilmTitle(ctx, &updateFilmTitleParams{film.Id, *film.Title})
     }
     if film.Description != nil {
-        err = qtx.updateFilmDescription(ctx, updateFilmDescriptionParams{film.Id, *film.Description})
+        err = qtx.updateFilmDescription(ctx, &updateFilmDescriptionParams{film.Id, *film.Description})
     }
     if film.ReleaseDate != nil {
         err = qtx.updateFilmReleaseDate(ctx,
-            updateFilmReleaseDateParams{
+            &updateFilmReleaseDateParams{
                 film.Id,
                 pgtype.Date{*film.ReleaseDate, pgtype.Finite, true}},
         )
@@ -90,18 +90,18 @@ func (q *Queries) UpdateActor(ctx context.Context, actor OptUpdateActor) error {
     qtx := q.WithTx(tx)
 
     if actor.Name != nil {
-        err = qtx.updateActorName(ctx, updateActorNameParams{actor.Id, *actor.Name})
+        err = qtx.updateActorName(ctx, &updateActorNameParams{actor.Id, *actor.Name})
     }
     if actor.Birthday != nil {
         err = qtx.updateActorBirthday(
             ctx,
-            updateActorBirthdayParams{
+            &updateActorBirthdayParams{
                 ID:       actor.Id,
                 Birthday: pgtype.Date{Time: *actor.Birthday, InfinityModifier: pgtype.Finite, Valid: true}},
         )
     }
     if actor.Gender != nil {
-        err = qtx.updateActorGender(ctx, updateActorGenderParams{actor.Id, *actor.Gender})
+        err = qtx.updateActorGender(ctx, &updateActorGenderParams{actor.Id, *actor.Gender})
     }
     if err != nil {
         return err
