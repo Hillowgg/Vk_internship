@@ -14,6 +14,7 @@ import (
 const addActor = `-- name: AddActor :exec
 INSERT INTO actors (name, birthday, gender)
 VALUES ($1, $2, $3)
+RETURNING id
 `
 
 type AddActorParams struct {

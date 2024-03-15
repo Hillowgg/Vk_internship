@@ -12,7 +12,8 @@ WHERE name LIKE '%$1%';
 
 -- name: AddActor :exec
 INSERT INTO actors (name, birthday, gender)
-VALUES ($1, $2, $3);
+VALUES ($1, $2, $3)
+RETURNING id;
 
 -- name: AddActorToFilm :exec
 INSERT INTO actors_films(actor_id, film_id) VALUES ($1, $2);
