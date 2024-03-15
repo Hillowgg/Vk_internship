@@ -45,24 +45,23 @@ WHERE id = $1;
 -- name: SearchFilmsByTitle :many
 SELECT *
 FROM films
-WHERE title LIKE '%' || $1 ||'%';
+WHERE title LIKE '%$1%';
 
 -- name: SearchFilmByTitleAndActor :one
 
 WITH ai AS (
-	SELECT id FROM actors where lower(name) LIKE lower('%' || $2 || '%')
+	SELECT id FROM actors where lower(name) LIKE lower('%$2%')
 ), fi AS (
-	SELECT id FROM films WHERE lower(title) LIKE lower('%' || $1 || '%')
+	SELECT id FROM films WHERE lower(title) LIKE lower('%$1%')
 ), f AS (
 	SELECT film_id FROM actors_films WHERE actor_id IN (select * from ai) AND film_id IN (SELECT * FROM fi)
 )
-SELECT id, title, description, release_date, rating FROM f JOIN films ON f.film_id = films.id;
+SELECT (title, description, release_date, rating) FROM f JOIN films ON f.film_id = films.id;
 
 
--- name: AddFilm :one
+-- name: AddFilm :exec
 INSERT INTO films (title, description, release_date, rating)
-VALUES ($1, $2, $3, $3)
-RETURNING id;
+VALUES ($1, $2, $3, $3);
 
 -- name: updateFilmTitle :exec
 UPDATE films
