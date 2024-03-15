@@ -157,30 +157,41 @@ func (q *Queries) SearchActorsByName(ctx context.Context) ([]Actor, error) {
 const searchFilmByTitleAndActor = `-- name: SearchFilmByTitleAndActor :one
 
 WITH ai AS (
-	SELECT id FROM actors where lower(name) LIKE lower('%$2%')
+	SELECT id FROM actors where lower(name) LIKE lower('%' || $2 || '%')
 ), fi AS (
-	SELECT id FROM films WHERE lower(title) LIKE lower('%$1%')
+	SELECT id FROM films WHERE lower(title) LIKE lower('%' || $1 || '%')
 ), f AS (
 	SELECT film_id FROM actors_films WHERE actor_id IN (select id from ai) AND film_id IN (SELECT id FROM fi)
 )
-SELECT (title, description, release_date, rating) FROM f JOIN films ON f.film_id = films.id
+SELECT id, title, description, release_date, rating FROM f JOIN films ON f.film_id = films.id
 `
 
-func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context) (interface{}, error) {
-	row := q.db.QueryRow(ctx, searchFilmByTitleAndActor)
-	var column_1 interface{}
-	err := row.Scan(&column_1)
-	return column_1, err
+type SearchFilmByTitleAndActorParams struct {
+	Column1 pgtype.Text
+	Column2 pgtype.Text
+}
+
+func (q *Queries) SearchFilmByTitleAndActor(ctx context.Context, arg SearchFilmByTitleAndActorParams) (Film, error) {
+	row := q.db.QueryRow(ctx, searchFilmByTitleAndActor, arg.Column1, arg.Column2)
+	var i Film
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.ReleaseDate,
+		&i.Rating,
+	)
+	return i, err
 }
 
 const searchFilmsByTitle = `-- name: SearchFilmsByTitle :many
 SELECT id, title, description, release_date, rating
 FROM films
-WHERE title LIKE '%$1%'
+WHERE title LIKE '%' || $1 || '%'
 `
 
-func (q *Queries) SearchFilmsByTitle(ctx context.Context) ([]Film, error) {
-	rows, err := q.db.Query(ctx, searchFilmsByTitle)
+func (q *Queries) SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]Film, error) {
+	rows, err := q.db.Query(ctx, searchFilmsByTitle, dollar_1)
 	if err != nil {
 		return nil, err
 	}

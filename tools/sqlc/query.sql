@@ -59,7 +59,7 @@ WITH ai AS (
 ), f AS (
 	SELECT film_id FROM actors_films WHERE actor_id IN (select * from ai) AND film_id IN (SELECT * FROM fi)
 )
-SELECT title, description, release_date, rating FROM f JOIN films ON f.film_id = films.id;
+SELECT id, title, description, release_date, rating FROM f JOIN films ON f.film_id = films.id;
 
 
 -- name: AddFilm :one
