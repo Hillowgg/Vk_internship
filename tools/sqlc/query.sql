@@ -62,9 +62,10 @@ WITH ai AS (
 SELECT (title, description, release_date, rating) FROM f JOIN films ON f.film_id = films.id;
 
 
--- name: AddFilm :exec
+-- name: AddFilm :one
 INSERT INTO films (title, description, release_date, rating)
-VALUES ($1, $2, $3, $3);
+VALUES ($1, $2, $3, $3)
+RETURNING id;
 
 -- name: updateFilmTitle :exec
 UPDATE films
