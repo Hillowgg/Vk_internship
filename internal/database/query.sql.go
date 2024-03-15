@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const addActor = `-- name: AddActor :exec
+const addActor = `-- name: AddActor :one
 INSERT INTO actors (name, birthday, gender)
 VALUES ($1, $2, $3)
 RETURNING id
@@ -23,9 +23,11 @@ type AddActorParams struct {
 	Gender   Gender
 }
 
-func (q *Queries) AddActor(ctx context.Context, arg AddActorParams) error {
-	_, err := q.db.Exec(ctx, addActor, arg.Name, arg.Birthday, arg.Gender)
-	return err
+func (q *Queries) AddActor(ctx context.Context, arg AddActorParams) (int32, error) {
+	row := q.db.QueryRow(ctx, addActor, arg.Name, arg.Birthday, arg.Gender)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const addActorToFilm = `-- name: AddActorToFilm :exec
@@ -67,6 +69,7 @@ FROM actors
 WHERE id = $1
 `
 
+// todo: fix deleting from actors_films
 func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, deleteActorById, id)
 	return err
@@ -78,6 +81,7 @@ FROM films
 WHERE id = $1
 `
 
+// todo: fix deleting from actors_films
 func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, deleteFilmById, id)
 	return err
@@ -127,11 +131,11 @@ func (q *Queries) GetFilmById(ctx context.Context, id int32) (Film, error) {
 const searchActorsByName = `-- name: SearchActorsByName :many
 SELECT id, name, birthday, gender
 FROM actors
-WHERE name LIKE '%$1%'
+WHERE name LIKE '%' || $1 || '%'
 `
 
-func (q *Queries) SearchActorsByName(ctx context.Context) ([]Actor, error) {
-	rows, err := q.db.Query(ctx, searchActorsByName)
+func (q *Queries) SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]Actor, error) {
+	rows, err := q.db.Query(ctx, searchActorsByName, dollar_1)
 	if err != nil {
 		return nil, err
 	}

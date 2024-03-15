@@ -56,7 +56,7 @@ func (q *Queries) UpdateFilm(ctx context.Context, film OptUpdateFilm) error {
         err = qtx.updateFilmReleaseDate(ctx,
             updateFilmReleaseDateParams{
                 film.Id,
-                pgtype.Date{*film.ReleaseDate, 0, true}},
+                pgtype.Date{*film.ReleaseDate, pgtype.Finite, true}},
         )
     }
     if err != nil {
@@ -71,4 +71,33 @@ type OptUpdateActor struct {
     Name     *string
     Birthday *time.Time
     Gender   *Gender
+}
+
+func (q *Queries) UpdateActor(ctx context.Context, actor OptUpdateActor) error {
+    conn := q.db.(*pgx.Conn)
+    tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback(ctx)
+    qtx := q.WithTx(tx)
+
+    if actor.Name != nil {
+        err = qtx.updateActorName(ctx, updateActorNameParams{actor.Id, *actor.Name})
+    }
+    if actor.Birthday != nil {
+        err = qtx.updateActorBirthday(
+            ctx,
+            updateActorBirthdayParams{
+                ID:       actor.Id,
+                Birthday: pgtype.Date{Time: *actor.Birthday, InfinityModifier: pgtype.Finite, Valid: true}},
+        )
+    }
+    if actor.Gender != nil {
+        err = qtx.updateActorGender(ctx, updateActorGenderParams{actor.Id, *actor.Gender})
+    }
+    if err != nil {
+        return err
+    }
+    return tx.Commit(ctx)
 }
