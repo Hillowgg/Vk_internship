@@ -8,14 +8,14 @@ import (
 
 type IService interface {
     GetActor(ctx context.Context, id int32) (database.Actor, error)
-    SearchActors(ctx context.Context, id int32) ([]database.Actor, error)
+    SearchActors(ctx context.Context, name string) ([]database.Actor, error)
 
-    CreateActor(ctx context.Context, params database.AddActorParams) (int32, error)
+    CreateActor(ctx context.Context, actor database.AddActorParams) (int32, error)
     AddActorToFilm(ctx context.Context, actorId, filmId int32) error
 
-    UpdateActor(ctx context.Context, id int32, film database.OptUpdateActor) error
+    UpdateActor(ctx context.Context, id int32, actor database.OptUpdateActor) error
 
-    DeleteActor(ctx context.Context) error
+    DeleteActor(ctx context.Context, id int32) error
 }
 
 type Service struct {

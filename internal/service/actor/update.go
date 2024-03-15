@@ -7,11 +7,11 @@ import (
 )
 
 func (s *Service) AddActorToFilm(ctx context.Context, actorId, filmId int32) error {
-    // TODO implement me
-    panic("implement me")
+    err := s.db.AddActorToFilm(ctx, database.AddActorToFilmParams{ActorID: actorId, FilmID: filmId})
+    return err
 }
 
-func (s *Service) UpdateActor(ctx context.Context, id int32, film database.OptUpdateActor) error {
-    // TODO implement me
-    panic("implement me")
+func (s *Service) UpdateActor(ctx context.Context, id int32, actor database.OptUpdateActor) error {
+    err := s.db.UpdateActor(ctx, actor)
+    return err
 }

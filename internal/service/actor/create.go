@@ -6,7 +6,7 @@ import (
     "main/internal/database"
 )
 
-func (s *Service) CreateActor(ctx context.Context, params database.AddActorParams) (int32, error) {
-    // TODO implement me
-    panic("implement me")
+func (s *Service) CreateActor(ctx context.Context, actor database.AddActorParams) (int32, error) {
+    id, err := s.db.AddActor(ctx, actor)
+    return id, err
 }
