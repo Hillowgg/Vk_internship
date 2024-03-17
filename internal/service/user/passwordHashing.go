@@ -3,6 +3,7 @@ package user
 import (
     "crypto/rand"
     "crypto/sha256"
+    "fmt"
 )
 
 var saltSize = 64
@@ -23,7 +24,7 @@ func hashPassword(pass string, salt []byte) string {
     passBytes := []byte(pass)
 
     sum := sha256.Sum256(append(passBytes, salt...))
-    return string(sum[:])
+    return fmt.Sprintf("%x", sum)
 }
 
 func generateHashedPassword(pass string) (string, string, error) {
