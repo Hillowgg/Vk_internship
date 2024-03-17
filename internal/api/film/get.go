@@ -1,9 +1,9 @@
 package film
 
 import (
+    "encoding/json"
     "net/http"
 
-    "github.com/tidwall/sjson"
     "main/internal/logs"
 )
 
@@ -24,12 +24,6 @@ func (h *Handler) SearchByActorAndTitle(w http.ResponseWriter, r *http.Request) 
         http.Error(w, "Film not found", http.StatusNotFound)
         return
     }
-    var json []byte
-    json, _ = sjson.SetBytes(json, "id", film.Id)
-    json, _ = sjson.SetBytes(json, "title", film.Title)
-    json, _ = sjson.SetBytes(json, "description", film.Description)
-    json, _ = sjson.SetBytes(json, "releaseDate", film.ReleaseDate)
-    json, _ = sjson.SetBytes(json, "rating", film.Rating)
     w.WriteHeader(http.StatusOK)
-    w.Write(json)
+    json.NewEncoder(w).Encode(film)
 }
