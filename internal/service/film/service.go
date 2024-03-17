@@ -29,7 +29,7 @@ type IService interface {
 
     CreateFilm(ctx context.Context, film *NewFilm) (int32, error)
     CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) error
-    UpdateFilm(ctx context.Context, film *database.OptUpdateFilm) error
+    UpdateFilm(ctx context.Context, film map[string]any) error
 
     DeleteFilm(ctx context.Context, id int32) error
 }
@@ -44,3 +44,5 @@ func NewService(db database.QuerierWithTx) *Service {
     }
     return &Service{db}
 }
+
+var _ IService = (*Service)(nil)

@@ -2,6 +2,7 @@ package database
 
 import (
     "context"
+    "errors"
     "time"
 
     "github.com/jackc/pgx/v5"
@@ -12,7 +13,7 @@ import (
 type QuerierWithTx interface {
     Querier
     AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
-    UpdateFilm(ctx context.Context, film *OptUpdateFilm) error
+    UpdateFilm(ctx context.Context, film map[string]any) error
     UpdateActor(ctx context.Context, actor *OptUpdateActor) error
     DeleteFilmById(ctx context.Context, id int32) error
 
@@ -48,7 +49,7 @@ type OptUpdateFilm struct {
     Rating      *uint8
 }
 
-func (q *Queries) UpdateFilm(ctx context.Context, film *OptUpdateFilm) error {
+func (q *Queries) UpdateFilm(ctx context.Context, film map[string]any) error {
     conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
@@ -57,17 +58,32 @@ func (q *Queries) UpdateFilm(ctx context.Context, film *OptUpdateFilm) error {
     defer tx.Rollback(ctx)
     qtx := q.WithTx(tx)
 
-    if film.Title != nil {
-        err = qtx.updateFilmTitle(ctx, &updateFilmTitleParams{film.Id, *film.Title})
+    id := film["Id"].(int32)
+
+    if title, ok := film["Title"]; ok {
+        t, ok := title.(string)
+        if !ok {
+            return errors.New("title has wrong type")
+        }
+        err = qtx.updateFilmTitle(ctx, &updateFilmTitleParams{id, t})
     }
-    if film.Description != nil {
-        err = qtx.updateFilmDescription(ctx, &updateFilmDescriptionParams{film.Id, *film.Description})
+    if desc, ok := film["Description"]; ok {
+        d, ok := desc.(string)
+        if !ok {
+            return errors.New("description has wrong type")
+        }
+        err = qtx.updateFilmDescription(ctx, &updateFilmDescriptionParams{id, d})
     }
-    if film.ReleaseDate != nil {
+    if date, ok := film["ReleaseDate"]; ok {
+        d, ok := date.(string)
+        if !ok {
+            return errors.New("release date has wrong type")
+        }
+        t, _ := time.Parse("2006-01-02", d)
         err = qtx.updateFilmReleaseDate(ctx,
             &updateFilmReleaseDateParams{
-                film.Id,
-                pgtype.Date{*film.ReleaseDate, pgtype.Finite, true}},
+                id,
+                pgtype.Date{t, pgtype.Finite, true}},
         )
     }
     if err != nil {
