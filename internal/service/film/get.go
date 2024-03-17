@@ -2,7 +2,9 @@ package film
 
 import (
     "context"
+    "errors"
 
+    "github.com/jackc/pgx/v5"
     "github.com/jackc/pgx/v5/pgtype"
     "main/internal/database"
     "main/internal/logs"
@@ -40,12 +42,16 @@ func (s *Service) SearchFilmByActor(ctx context.Context, title string, actorName
             Column1: pgtype.Text{String: title, Valid: true},
             Column2: pgtype.Text{String: actorName, Valid: true},
         })
+    logs.Log.Infow("Searching for film with title and actor's name",
+        "title", title, "name", actorName)
+    if errors.Is(err, pgx.ErrNoRows) {
+        return nil, nil
+    }
     if err != nil {
         logs.Log.Errorw("Failed to Search film with title and actor",
             "title", title, "name", actorName, "err", err)
         return nil, err
     }
-    logs.Log.Infow("Searched for film with title and actor's name",
-        "title", title, "name", actorName)
+
     return dbFilmToFilm(dbFilm), nil
 }
