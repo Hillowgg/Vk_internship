@@ -83,12 +83,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
     err := json.NewDecoder(r.Body).Decode(&login)
     if err != nil {
         w.WriteHeader(http.StatusBadRequest)
-        logs.Log.Errorw("Failed to decode login", "err", err)
+        logs.Log.Errorw("Failed to decode login", "err", err, "body", r.Body)
         return
     }
     u, err := h.serv.CheckLoginCredentials(r.Context(), login.Login, login.Password)
     if errors.Is(err, user.WrongCredentials) {
         w.WriteHeader(http.StatusUnauthorized)
+        w.Write([]byte("Wrong credentials"))
         return
     }
     if err != nil {
