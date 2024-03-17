@@ -22,6 +22,12 @@ type Querier interface {
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
 	//FILMS-----------------------------------------------------------------------------------------------------------------
 	GetFilmById(ctx context.Context, id int32) (*Film, error)
+	GetFilmsASCRating(ctx context.Context) ([]*Film, error)
+	GetFilmsASCReleaseDate(ctx context.Context) ([]*Film, error)
+	GetFilmsASCTitle(ctx context.Context) ([]*Film, error)
+	GetFilmsDESCRating(ctx context.Context) ([]*Film, error)
+	GetFilmsDESCReleaseDate(ctx context.Context) ([]*Film, error)
+	GetFilmsDESCTitle(ctx context.Context) ([]*Film, error)
 	GetUserByEmail(ctx context.Context, email string) (*User, error)
 	//USERS-----------------------------------------------------------------------------------------------------------------
 	GetUserById(ctx context.Context, id pgtype.UUID) (*User, error)

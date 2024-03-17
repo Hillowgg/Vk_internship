@@ -163,6 +163,186 @@ func (q *Queries) GetFilmById(ctx context.Context, id int32) (*Film, error) {
 	return &i, err
 }
 
+const getFilmsASCRating = `-- name: GetFilmsASCRating :many
+SELECT id, title, description, release_date, rating from films ORDER BY rating ASC
+`
+
+func (q *Queries) GetFilmsASCRating(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsASCRating)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFilmsASCReleaseDate = `-- name: GetFilmsASCReleaseDate :many
+SELECT id, title, description, release_date, rating from films ORDER BY release_date ASC
+`
+
+func (q *Queries) GetFilmsASCReleaseDate(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsASCReleaseDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFilmsASCTitle = `-- name: GetFilmsASCTitle :many
+SELECT id, title, description, release_date, rating from films ORDER BY title ASC
+`
+
+func (q *Queries) GetFilmsASCTitle(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsASCTitle)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFilmsDESCRating = `-- name: GetFilmsDESCRating :many
+SELECT id, title, description, release_date, rating from films ORDER BY rating DESC
+`
+
+func (q *Queries) GetFilmsDESCRating(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsDESCRating)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFilmsDESCReleaseDate = `-- name: GetFilmsDESCReleaseDate :many
+SELECT id, title, description, release_date, rating from films ORDER BY release_date DESC
+`
+
+func (q *Queries) GetFilmsDESCReleaseDate(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsDESCReleaseDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFilmsDESCTitle = `-- name: GetFilmsDESCTitle :many
+SELECT id, title, description, release_date, rating from films ORDER BY title DESC
+`
+
+func (q *Queries) GetFilmsDESCTitle(ctx context.Context) ([]*Film, error) {
+	rows, err := q.db.Query(ctx, getFilmsDESCTitle)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Film
+	for rows.Next() {
+		var i Film
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, nickname, email, password_hash, salt, is_admin FROM users WHERE email=$1
 `

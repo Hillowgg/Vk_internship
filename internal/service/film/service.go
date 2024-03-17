@@ -24,6 +24,7 @@ type NewFilm struct {
 }
 type IService interface {
     GetFilm(ctx context.Context, id int32) (*Film, error)
+    GetFilms(ctx context.Context, sortBy, sortType string) ([]*Film, error)
     SearchFilms(ctx context.Context, title string) ([]*Film, error)
     SearchFilmByActor(ctx context.Context, title string, actorName string) (*Film, error)
 

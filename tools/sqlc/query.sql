@@ -44,6 +44,25 @@ SELECT *
 FROM films
 WHERE id = $1;
 
+-- name: GetFilmsASCTitle :many
+SELECT * from films ORDER BY title ASC;
+
+-- name: GetFilmsDESCTitle :many
+SELECT * from films ORDER BY title DESC;
+
+-- name: GetFilmsASCReleaseDate :many
+SELECT * from films ORDER BY release_date ASC;
+
+-- name: GetFilmsDESCReleaseDate :many
+SELECT * from films ORDER BY release_date DESC;
+
+-- name: GetFilmsASCRating :many
+SELECT * from films ORDER BY rating ASC;
+
+-- name: GetFilmsDESCRating :many
+SELECT * from films ORDER BY rating DESC;
+
+
 -- name: SearchFilmsByTitle :many
 SELECT *
 FROM films
