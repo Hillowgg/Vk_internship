@@ -24,7 +24,8 @@ func validateNewFilm(bytes []byte) (*film.NewFilm, error) {
         ReleaseDate: date,
         Rating:      int8(json.Get("Rating").Int()),
     }
-    if f.Title == "" || f.Description == "" || f.Rating < 1 || f.Rating > 10 {
+    if len(f.Title) < 1 || len(f.Title) > 150 || len(f.Description) < 1 ||
+        len(f.Description) > 1000 || f.Rating < 1 || f.Rating > 10 {
         logs.Log.Errorw("Invalid film data", "film", f)
         return nil, errors.New("invalid film data")
     }
