@@ -48,6 +48,7 @@ func (a *App) Run() error {
     mux := http.NewServeMux()
     mux.Handle("/user/", a.api.User)
     mux.Handle("/film/", a.api.Film)
+    mux.Handle("/actor/", a.api.Actor)
     logs.Log.Infow("Starting server", "port", 8080)
     err := http.ListenAndServe(":8080", mux)
     return err
