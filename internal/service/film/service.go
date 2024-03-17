@@ -38,9 +38,9 @@ type Service struct {
     db database.QuerierWithTx
 }
 
-func NewService(db database.QuerierWithTx) (*Service, error) {
+func NewService(db database.QuerierWithTx) *Service {
     if db == nil {
         logs.Log.Error("Failed to create Film service: db is nil")
     }
-    return &Service{db}, nil
+    return &Service{db}
 }
