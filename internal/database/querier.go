@@ -15,6 +15,8 @@ type Querier interface {
 	AddActorToFilm(ctx context.Context, arg *AddActorToFilmParams) error
 	AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error)
 	AddUser(ctx context.Context, arg *AddUserParams) error
+	DeleteActorById(ctx context.Context, id int32) error
+	DeleteFilmById(ctx context.Context, id int32) error
 	DeleteUser(ctx context.Context, id pgtype.UUID) error
 	//ACTORS----------------------------------------------------------------------------------------------------------------
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
@@ -27,10 +29,6 @@ type Querier interface {
 	SearchActorsByName(ctx context.Context, dollar_1 pgtype.Text) ([]*Actor, error)
 	SearchFilmByTitleAndActor(ctx context.Context, arg *SearchFilmByTitleAndActorParams) (*Film, error)
 	SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) ([]*Film, error)
-	deleteActorById(ctx context.Context, id int32) error
-	deleteConnectionsByActorId(ctx context.Context, actorID int32) error
-	deleteConnectionsByFilmId(ctx context.Context, filmID int32) error
-	deleteFilmById(ctx context.Context, id int32) error
 	updateActorBirthday(ctx context.Context, arg *updateActorBirthdayParams) error
 	updateActorGender(ctx context.Context, arg *updateActorGenderParams) error
 	updateActorName(ctx context.Context, arg *updateActorNameParams) error

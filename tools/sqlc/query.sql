@@ -33,11 +33,9 @@ UPDATE actors
 SET gender = $2
 WHERE id = $1;
 
--- name: deleteActorById :exec
+-- name: DeleteActorById :exec
 DELETE FROM actors WHERE id = $1;
 
--- name: deleteConnectionsByActorId :exec
-DELETE FROM actors_films WHERE actor_id = $1;
 
 --FILMS-----------------------------------------------------------------------------------------------------------------
 
@@ -88,11 +86,8 @@ UPDATE films
 SET rating = $2
 WHERE id = $1;
 
--- name: deleteFilmById :exec
+-- name: DeleteFilmById :exec
 DELETE FROM films WHERE id = $1;
-
--- name: deleteConnectionsByFilmId :exec
-DELETE FROM actors_films WHERE film_id = $1;
 
 --USERS-----------------------------------------------------------------------------------------------------------------
 

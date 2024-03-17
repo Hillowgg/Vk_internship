@@ -14,7 +14,7 @@ type QuerierWithTx interface {
     Querier
     AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
     UpdateFilm(ctx context.Context, film map[string]any) error
-    UpdateActor(ctx context.Context, actor *OptUpdateActor) error
+    UpdateActor(ctx context.Context, actor map[string]any) error
     DeleteFilmById(ctx context.Context, id int32) error
 
     DeleteActorById(ctx context.Context, id int32) error
@@ -79,7 +79,10 @@ func (q *Queries) UpdateFilm(ctx context.Context, film map[string]any) error {
         if !ok {
             return errors.New("release date has wrong type")
         }
-        t, _ := time.Parse("2006-01-02", d)
+        t, err := time.Parse("2006-01-02", d)
+        if err != nil {
+            return errors.New("release date has wrong format")
+        }
         err = qtx.updateFilmReleaseDate(ctx,
             &updateFilmReleaseDateParams{
                 id,
@@ -100,7 +103,7 @@ type OptUpdateActor struct {
     Gender   *Gender
 }
 
-func (q *Queries) UpdateActor(ctx context.Context, actor *OptUpdateActor) error {
+func (q *Queries) UpdateActor(ctx context.Context, actor map[string]any) error {
     conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
@@ -109,58 +112,39 @@ func (q *Queries) UpdateActor(ctx context.Context, actor *OptUpdateActor) error 
     defer tx.Rollback(ctx)
     qtx := q.WithTx(tx)
 
-    if actor.Name != nil {
-        err = qtx.updateActorName(ctx, &updateActorNameParams{actor.Id, *actor.Name})
+    id := actor["Id"].(int32)
+
+    if name, ok := actor["Name"]; ok {
+        n, ok := name.(string)
+        if !ok {
+            return errors.New("name has wrong type")
+        }
+        err = qtx.updateActorName(ctx, &updateActorNameParams{id, n})
     }
-    if actor.Birthday != nil {
+    if birthday, ok := actor["Birthday"]; ok {
+        b, ok := birthday.(string)
+        if !ok {
+            return errors.New("birthday has wrong type")
+        }
+        t, err := time.Parse("2006-01-02", b)
+        if err != nil {
+            return errors.New("birthday has wrong format")
+        }
         err = qtx.updateActorBirthday(
             ctx,
             &updateActorBirthdayParams{
-                ID:       actor.Id,
-                Birthday: pgtype.Date{Time: *actor.Birthday, InfinityModifier: pgtype.Finite, Valid: true}},
+                ID:       id,
+                Birthday: pgtype.Date{Time: t, InfinityModifier: pgtype.Finite, Valid: true}},
         )
     }
-    if actor.Gender != nil {
-        err = qtx.updateActorGender(ctx, &updateActorGenderParams{actor.Id, *actor.Gender})
+    if gender, ok := actor["Gender"]; ok {
+        var g Gender
+        err := g.Scan(gender)
+        if err != nil {
+            return errors.New("gender has wrong type")
+        }
+        err = qtx.updateActorGender(ctx, &updateActorGenderParams{id, g})
     }
-    if err != nil {
-        return err
-    }
-    return tx.Commit(ctx)
-}
-
-func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
-    conn := q.db.(*pgxpool.Pool)
-    tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
-    if err != nil {
-        return err
-    }
-    defer tx.Rollback(ctx)
-    qtx := q.WithTx(tx)
-    err = qtx.deleteConnectionsByFilmId(ctx, id)
-    if err != nil {
-        return err
-    }
-    err = q.deleteFilmById(ctx, id)
-    if err != nil {
-        return err
-    }
-    return tx.Commit(ctx)
-}
-
-func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
-    conn := q.db.(*pgx.Conn)
-    tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
-    if err != nil {
-        return err
-    }
-    defer tx.Rollback(ctx)
-    qtx := q.WithTx(tx)
-    err = qtx.deleteConnectionsByActorId(ctx, id)
-    if err != nil {
-        return err
-    }
-    err = q.deleteActorById(ctx, id)
     if err != nil {
         return err
     }

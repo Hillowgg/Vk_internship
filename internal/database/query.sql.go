@@ -94,6 +94,24 @@ func (q *Queries) AddUser(ctx context.Context, arg *AddUserParams) error {
 	return err
 }
 
+const deleteActorById = `-- name: DeleteActorById :exec
+DELETE FROM actors WHERE id = $1
+`
+
+func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteActorById, id)
+	return err
+}
+
+const deleteFilmById = `-- name: DeleteFilmById :exec
+DELETE FROM films WHERE id = $1
+`
+
+func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteFilmById, id)
+	return err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
 
 DELETE FROM users WHERE id=$1
@@ -292,42 +310,6 @@ func (q *Queries) SearchFilmsByTitle(ctx context.Context, dollar_1 pgtype.Text) 
 		return nil, err
 	}
 	return items, nil
-}
-
-const deleteActorById = `-- name: deleteActorById :exec
-DELETE FROM actors WHERE id = $1
-`
-
-func (q *Queries) deleteActorById(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteActorById, id)
-	return err
-}
-
-const deleteConnectionsByActorId = `-- name: deleteConnectionsByActorId :exec
-DELETE FROM actors_films WHERE actor_id = $1
-`
-
-func (q *Queries) deleteConnectionsByActorId(ctx context.Context, actorID int32) error {
-	_, err := q.db.Exec(ctx, deleteConnectionsByActorId, actorID)
-	return err
-}
-
-const deleteConnectionsByFilmId = `-- name: deleteConnectionsByFilmId :exec
-DELETE FROM actors_films WHERE film_id = $1
-`
-
-func (q *Queries) deleteConnectionsByFilmId(ctx context.Context, filmID int32) error {
-	_, err := q.db.Exec(ctx, deleteConnectionsByFilmId, filmID)
-	return err
-}
-
-const deleteFilmById = `-- name: deleteFilmById :exec
-DELETE FROM films WHERE id = $1
-`
-
-func (q *Queries) deleteFilmById(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteFilmById, id)
-	return err
 }
 
 const updateActorBirthday = `-- name: updateActorBirthday :exec
