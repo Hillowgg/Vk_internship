@@ -1,13 +1,18 @@
-package user
+package middleware
 
 import (
     "net/http"
     "strings"
 
     "main/internal/logs"
+    "main/internal/service/session"
 )
 
-func UserMiddleware(next http.HandlerFunc) http.HandlerFunc {
+type Middleware struct {
+    session session.IService
+}
+
+func (mw *Middleware) UserMiddleware(next http.HandlerFunc) http.HandlerFunc {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         bearer := r.Header.Get("Authorization")
         token := strings.TrimPrefix(bearer, "Bearer ")
@@ -15,9 +20,7 @@ func UserMiddleware(next http.HandlerFunc) http.HandlerFunc {
             w.WriteHeader(http.StatusUnauthorized)
             return
         }
-        mutex.RLock()
-        _, ok := tokens[token]
-        mutex.RUnlock()
+        ok := mw.session.IsUser(r.Context(), token)
 
         if !ok {
             w.WriteHeader(http.StatusUnauthorized)
@@ -28,7 +31,7 @@ func UserMiddleware(next http.HandlerFunc) http.HandlerFunc {
     })
 }
 
-func AdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func (mw *Middleware) AdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
         bearer := r.Header.Get("Authorization")
@@ -39,21 +42,18 @@ func AdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
             return
         }
 
-        mutex.RLock()
-        user, ok := tokens[token]
-        mutex.RUnlock()
+        ok := mw.session.IsAdmin(r.Context(), token)
 
         if !ok {
             w.WriteHeader(http.StatusUnauthorized)
             w.Write([]byte("Invalid token"))
             return
         }
-        if !user.isAdmin {
-            w.WriteHeader(http.StatusForbidden)
-            w.Write([]byte("Not admin"))
-            return
-        }
-        logs.Log.Infow("Admin request", "user", user)
+        logs.Log.Infow("Admin request", "token", token)
         next(w, r)
     })
+}
+
+func NewMiddleware(session session.IService) *Middleware {
+    return &Middleware{session: session}
 }

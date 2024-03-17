@@ -6,18 +6,21 @@ import (
 
     "github.com/jackc/pgx/v5/pgxpool"
     "main/internal/api"
+    "main/internal/cache"
     "main/internal/database"
     "main/internal/logs"
 )
 
 type App struct {
-    api *api.API
-    db  database.QuerierWithTx
+    api   *api.API
+    db    database.QuerierWithTx
+    cache cache.ICache
 }
 
 func NewApp() (*App, error) {
     app := &App{}
     app.initDataBase()
+    app.initCache()
     app.initAPI()
     return app, nil
 }
@@ -32,8 +35,13 @@ func (a *App) initDataBase() {
     a.db = database.New(conn)
 }
 
+func (a *App) initCache() {
+    a.cache = cache.NewCache()
+    logs.Log.Infow("Connected to cache")
+}
+
 func (a *App) initAPI() {
-    a.api = api.NewAPI(a.db)
+    a.api = api.NewAPI(a.db, a.cache)
 }
 
 func (a *App) Run() error {

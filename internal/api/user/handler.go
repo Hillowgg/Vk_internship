@@ -3,12 +3,16 @@ package user
 import (
     "net/http"
 
+    "main/internal/api/middleware"
     "main/internal/logs"
+    "main/internal/service/session"
     "main/internal/service/user"
 )
 
 type Handler struct {
-    serv user.IService
+    userServ    user.IService
+    sessionServ session.IService
+    mw          *middleware.Middleware
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -22,6 +26,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func NewHandler(service user.IService) *Handler {
-    return &Handler{serv: service}
+func NewHandler(user user.IService, session session.IService, mw *middleware.Middleware) *Handler {
+    return &Handler{userServ: user, sessionServ: session, mw: mw}
 }
