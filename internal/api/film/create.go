@@ -4,10 +4,10 @@ import (
     "errors"
     "io"
     "net/http"
-    "strconv"
     "time"
 
     "github.com/tidwall/gjson"
+    "github.com/tidwall/sjson"
     "main/internal/logs"
     "main/internal/service/film"
 )
@@ -47,5 +47,6 @@ func (h *Handler) CreateFilm(w http.ResponseWriter, r *http.Request) {
     }
     logs.Log.Infow("Added film", "film", f)
     w.WriteHeader(http.StatusOK)
-    w.Write([]byte(strconv.Itoa(int(id))))
+    json, _ := sjson.SetBytes([]byte{}, "id", id)
+    w.Write(json)
 }
