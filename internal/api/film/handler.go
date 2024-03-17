@@ -17,6 +17,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     endpoint := r.URL.Path
     logs.Log.Infow("Request", "method", r.Method, "endpoint", endpoint)
     switch endpoint {
+    case "/film/search":
+        h.mw.UserMiddleware(h.SearchByActorAndTitle)(w, r)
     case "/film/add":
         h.mw.AdminMiddleware(h.CreateFilm)(w, r)
     case "/film/update":
