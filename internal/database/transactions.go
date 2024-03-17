@@ -6,6 +6,7 @@ import (
 
     "github.com/jackc/pgx/v5"
     "github.com/jackc/pgx/v5/pgtype"
+    "github.com/jackc/pgx/v5/pgxpool"
 )
 
 type QuerierWithTx interface {
@@ -13,10 +14,13 @@ type QuerierWithTx interface {
     AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
     UpdateFilm(ctx context.Context, film *OptUpdateFilm) error
     UpdateActor(ctx context.Context, actor *OptUpdateActor) error
+    DeleteFilmById(ctx context.Context, id int32) error
+
+    DeleteActorById(ctx context.Context, id int32) error
 }
 
 func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error {
-    conn := q.db.(*pgx.Conn)
+    conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
         return err
@@ -45,7 +49,7 @@ type OptUpdateFilm struct {
 }
 
 func (q *Queries) UpdateFilm(ctx context.Context, film *OptUpdateFilm) error {
-    conn := q.db.(*pgx.Conn)
+    conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
         return err
@@ -81,7 +85,7 @@ type OptUpdateActor struct {
 }
 
 func (q *Queries) UpdateActor(ctx context.Context, actor *OptUpdateActor) error {
-    conn := q.db.(*pgx.Conn)
+    conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
         return err
@@ -103,6 +107,44 @@ func (q *Queries) UpdateActor(ctx context.Context, actor *OptUpdateActor) error 
     if actor.Gender != nil {
         err = qtx.updateActorGender(ctx, &updateActorGenderParams{actor.Id, *actor.Gender})
     }
+    if err != nil {
+        return err
+    }
+    return tx.Commit(ctx)
+}
+
+func (q *Queries) DeleteFilmById(ctx context.Context, id int32) error {
+    conn := q.db.(*pgxpool.Pool)
+    tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback(ctx)
+    qtx := q.WithTx(tx)
+    err = qtx.deleteConnectionsByFilmId(ctx, id)
+    if err != nil {
+        return err
+    }
+    err = q.deleteFilmById(ctx, id)
+    if err != nil {
+        return err
+    }
+    return tx.Commit(ctx)
+}
+
+func (q *Queries) DeleteActorById(ctx context.Context, id int32) error {
+    conn := q.db.(*pgx.Conn)
+    tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback(ctx)
+    qtx := q.WithTx(tx)
+    err = qtx.deleteConnectionsByActorId(ctx, id)
+    if err != nil {
+        return err
+    }
+    err = q.deleteActorById(ctx, id)
     if err != nil {
         return err
     }
