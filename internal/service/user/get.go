@@ -40,9 +40,11 @@ func (s *Service) IsUserAdmin(ctx context.Context, id uuid.UUID) (bool, error) {
     return user.IsAdmin, err
 }
 
+var WrongCredentials = errors.New("wrong credentials")
+
 func checkCredentials(dbUser *database.User, password string) (*User, error) {
     if !checkPassword(password, dbUser.Salt.String, dbUser.PasswordHash.String) {
-        return nil, errors.New("wrong credentials")
+        return nil, WrongCredentials
     }
     logs.Log.Infow("Checked credentials", "user", dbUser, "password", password)
     return dbUserToUser(dbUser), nil
@@ -50,7 +52,7 @@ func checkCredentials(dbUser *database.User, password string) (*User, error) {
 func (s *Service) CheckEmailCredentials(ctx context.Context, email, password string) (*User, error) {
     dbUser, err := s.db.GetUserByEmail(ctx, email)
     if errors.Is(err, pgx.ErrNoRows) {
-        return nil, errors.New("wrong credentials")
+        return nil, WrongCredentials
     } else if err != nil {
         logs.Log.Errorw("Failed to check email credentials",
             "email", email, "password", password, "err", err)
@@ -61,7 +63,7 @@ func (s *Service) CheckEmailCredentials(ctx context.Context, email, password str
 func (s *Service) CheckLoginCredentials(ctx context.Context, login, password string) (*User, error) {
     dbUser, err := s.db.GetUserByLogin(ctx, login)
     if errors.Is(err, pgx.ErrNoRows) {
-        return nil, errors.New("wrong credentials")
+        return nil, WrongCredentials
     } else if err != nil {
         logs.Log.Errorw("Failed to check login credentials",
             "login", login, "password", password, "err", err)
