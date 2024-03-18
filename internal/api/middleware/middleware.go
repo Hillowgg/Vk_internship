@@ -45,7 +45,7 @@ func (mw *Middleware) AdminMiddleware(next http.HandlerFunc) http.HandlerFunc {
         ok := mw.session.IsAdmin(r.Context(), token)
 
         if !ok {
-            w.WriteHeader(http.StatusUnauthorized)
+            w.WriteHeader(http.StatusForbidden)
             w.Write([]byte("Invalid token"))
             return
         }

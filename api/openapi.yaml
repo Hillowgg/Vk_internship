@@ -23,17 +23,33 @@ paths:
       description: Return films by order specified in query
       parameters:
         - in: query
-          name: actor
+          name: sortBy
           schema:
             type:
               string
+            enum:
+              - rating
+              - title
+              - release_date
+
+            required: false
+        - in: query
+          name: sortType
+          schema:
+            type:
+              string
+            enum:
+              - desc
+              - asc
+            required: false
+
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Film'
+                $ref: '#/components/schemas/Films'
         '400':
           description: No film with this Id
         '401':
@@ -74,7 +90,7 @@ paths:
   /film/create:
     put:
       tags:
-      - film
+        - film
       summary: Create new film
       description: Allow admin to create new film
       requestBody:
@@ -103,7 +119,7 @@ paths:
   /film/update:
     post:
       tags:
-      - film
+        - film
       summary: Update a film by id
       description: Allow admin to update film
       requestBody:
@@ -125,7 +141,7 @@ paths:
   /film/delete:
     delete:
       tags:
-      - film
+        - film
       summary: Delete film by id
       description: Allow admin to delete a film by id
       parameters:
@@ -147,7 +163,7 @@ paths:
   /actor/get:
     get:
       tags:
-      - actor
+        - actor
       summary: Get actor by id
       description: Allow user to get actor with id specified in query
       responses:
@@ -167,7 +183,7 @@ paths:
   /actor/get_with_films:
     get:
       tags:
-      - actor
+        - actor
       summary: Get all actors with films
       description: Allow user to get all actors with films
       responses:
@@ -184,7 +200,7 @@ paths:
   /actor/create:
     put:
       tags:
-      - actor
+        - actor
       summary: Create new actor
       description: Allow admin to create new film
       requestBody:
@@ -201,7 +217,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  id: 
+                  id:
                     type: integer
                     format: int32
         '400':
@@ -213,7 +229,7 @@ paths:
   /actor/update:
     post:
       tags:
-      - actor
+        - actor
       summary: Update an actor
       description: Allow admin to update info about the actor
       requestBody:
@@ -231,11 +247,11 @@ paths:
           description: Unauthorized
         '500':
           description: Internal error
-            
+
   /actor/delete:
     delete:
       tags:
-      - actor
+        - actor
       summary: Delete film
       description: Allow admin to delete the actor
       parameters:
@@ -280,7 +296,7 @@ paths:
                   id:
                     type: string
                     format: uuid
-                    
+
 
   /user/login:
     get:
@@ -319,16 +335,20 @@ paths:
                 properties:
                   token:
                     type: string
-                  
+
         '400':
           description: Invalid username/password supplied
-  
+
 components:
   schemas:
+    Films:
+      type: array
+      items:
+        $ref: '#/components/schemas/Film'
     Film:
       type: object
       properties:
-        id: 
+        id:
           type: integer
           format: int32
         title:
@@ -337,7 +357,7 @@ components:
         description:
           type: string
           example: "Good film"
-        release_date: 
+        release_date:
           type: string
           format: date
         rating:
@@ -352,7 +372,7 @@ components:
         description:
           type: string
           example: "Good film"
-        release_date: 
+        release_date:
           type: string
           format: date
         rating:
@@ -373,8 +393,8 @@ components:
         gender:
           type: string
           enum:
-           - male
-           - female
+            - male
+            - female
     NewActor:
       type: object
       properties:
@@ -387,9 +407,9 @@ components:
         gender:
           type: string
           enum:
-           - male
-           - female
-          
+            - male
+            - female
+
     NewUser:
       type: object
       properties:
@@ -410,7 +430,7 @@ components:
       items:
         type: object
         properties:
-          actor: 
+          actor:
             type: object
             properties:
               id:
@@ -425,14 +445,14 @@ components:
               gender:
                 type: string
                 enum:
-                 - male
-                 - female
+                  - male
+                  - female
           films:
             type: array
             items:
               type: object
               properties:
-                id: 
+                id:
                   type: integer
                   format: int32
                 title:
@@ -441,7 +461,7 @@ components:
                 description:
                   type: string
                   example: "Good film"
-                release_date: 
+                release_date:
                   type: string
                   format: date
                 rating:

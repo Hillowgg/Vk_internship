@@ -31,9 +31,9 @@ func (h *Handler) GetActorsWithFilms(w http.ResponseWriter, r *http.Request) {
     }
     w.WriteHeader(http.StatusOK)
     err = json.NewEncoder(w).Encode(actors)
-    var js []byte
-    for k, v := range actors {
-        js, _ = sjson.SetBytes(js, ".-1", map[string]interface{}{"actor": k, "films": v})
+    js := []byte("[]")
+    for actor, films := range actors {
+        js, _ = sjson.SetBytes(js, "-1", map[string]interface{}{"actor": actor, "films": films})
     }
     w.Write(js)
 }
