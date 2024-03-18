@@ -143,7 +143,7 @@ func TestService_GetFilms(t *testing.T) {
     // write test for GetFilms
     db := new(mockDb)
     s := NewService(db)
-    db.On("GetFilms").Return([]*Film{}, nil)
+    db.On("GetFilmsASCTitle", mock.Anything).Return([]*database.Film{}, nil)
     _, err := s.GetFilms(context.Background(), "title", "asc")
     if err != nil {
         t.Error("GetFilms returned error")
@@ -165,7 +165,7 @@ func TestService_SearchFilms(t *testing.T) {
     // write test for SearchFilms
     db := new(mockDb)
     s := NewService(db)
-    db.On("SearchFilmsByTitle", mock.Anything, mock.Anything).Return([]*Film{}, nil)
+    db.On("SearchFilmsByTitle", mock.Anything, mock.Anything).Return([]*database.Film{}, nil)
     _, err := s.SearchFilms(context.Background(), "title")
     if err != nil {
         t.Error("SearchFilms returned error")
