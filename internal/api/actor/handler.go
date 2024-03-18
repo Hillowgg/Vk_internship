@@ -20,6 +20,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     switch endpoint {
     case "/actor/get":
         h.mw.UserMiddleware(h.GetActor)(w, r)
+    case "/actor/get_with_films":
+        h.mw.UserMiddleware(h.GetActorsWithFilms)(w, r)
     case "/actor/create":
         h.mw.AdminMiddleware(h.CreateActor)(w, r)
     case "/actor/update":

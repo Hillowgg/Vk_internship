@@ -62,6 +62,11 @@ SELECT * from films ORDER BY rating ASC;
 -- name: GetFilmsDESCRating :many
 SELECT * from films ORDER BY rating DESC;
 
+-- name: GetActorsWithFilms :many
+select actors.id, name, birthday, gender, film_id, title, description, release_date, rating
+from actors left join actors_films as af on actors.id=af.actor_id
+left join films on af.film_id = films.id order by actors.id;
+
 
 -- name: SearchFilmsByTitle :many
 SELECT *

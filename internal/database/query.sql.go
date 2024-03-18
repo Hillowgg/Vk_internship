@@ -142,6 +142,54 @@ func (q *Queries) GetActorById(ctx context.Context, id int32) (*Actor, error) {
 	return &i, err
 }
 
+const getActorsWithFilms = `-- name: GetActorsWithFilms :many
+select actors.id, name, birthday, gender, film_id, title, description, release_date, rating
+from actors left join actors_films as af on actors.id=af.actor_id
+left join films on af.film_id = films.id order by actors.id
+`
+
+type GetActorsWithFilmsRow struct {
+	ID          int32
+	Name        string
+	Birthday    pgtype.Date
+	Gender      Gender
+	FilmID      pgtype.Int4
+	Title       pgtype.Text
+	Description pgtype.Text
+	ReleaseDate pgtype.Date
+	Rating      pgtype.Int2
+}
+
+func (q *Queries) GetActorsWithFilms(ctx context.Context) ([]*GetActorsWithFilmsRow, error) {
+	rows, err := q.db.Query(ctx, getActorsWithFilms)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*GetActorsWithFilmsRow
+	for rows.Next() {
+		var i GetActorsWithFilmsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Birthday,
+			&i.Gender,
+			&i.FilmID,
+			&i.Title,
+			&i.Description,
+			&i.ReleaseDate,
+			&i.Rating,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getFilmById = `-- name: GetFilmById :one
 
 SELECT id, title, description, release_date, rating

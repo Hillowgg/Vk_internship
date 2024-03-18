@@ -20,6 +20,7 @@ type Querier interface {
 	DeleteUser(ctx context.Context, id pgtype.UUID) error
 	//ACTORS----------------------------------------------------------------------------------------------------------------
 	GetActorById(ctx context.Context, id int32) (*Actor, error)
+	GetActorsWithFilms(ctx context.Context) ([]*GetActorsWithFilmsRow, error)
 	//FILMS-----------------------------------------------------------------------------------------------------------------
 	GetFilmById(ctx context.Context, id int32) (*Film, error)
 	GetFilmsASCRating(ctx context.Context) ([]*Film, error)

@@ -6,6 +6,7 @@ import (
 
     "main/internal/database"
     "main/internal/logs"
+    "main/internal/service/film"
 )
 
 type Actor struct {
@@ -23,6 +24,7 @@ type NewActor struct {
 
 type IService interface {
     GetActor(ctx context.Context, id int32) (*Actor, error)
+    GetActorsWithFilms(ctx context.Context) (map[Actor][]film.Film, error)
     SearchActors(ctx context.Context, name string) ([]*Actor, error)
 
     CreateActor(ctx context.Context, actor *NewActor) (int32, error)
