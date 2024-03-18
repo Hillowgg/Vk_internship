@@ -1,0 +1,449 @@
+openapi: 3.0.3
+info:
+  title: Vk Internship Secs
+  description: |-
+    This is api specification for my project
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:80/
+tags:
+  - name: film
+    description: Working with films
+  - name: actor
+    description: Working with actors
+  - name: user
+    description: Everything connected to auth/sessions
+paths:
+  /film/get:
+    get:
+      tags:
+        - film
+      summary: Returns all the films from database
+      description: Return films by order specified in query
+      parameters:
+        - in: query
+          name: actor
+          schema:
+            type:
+              string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        '400':
+          description: No film with this Id
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+
+  /film/search:
+    get:
+      tags:
+        - film
+      summary: Allow you to find film with specified actor
+      description: You can find film using it's title and actor's name
+      parameters:
+        - in: query
+          name: actor
+          schema:
+            type:
+              string
+        - in: query
+          name: title
+          schema:
+            type:
+              string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film' # change
+        '401':
+          description: Unauthorized
+        '404':
+          description: Film not found
+        '500':
+          description: Internal error
+  /film/create:
+    put:
+      tags:
+      - film
+      summary: Create new film
+      description: Allow admin to create new film
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFilm'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+        '400':
+          description: One or more parameters weren't provided
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  /film/update:
+    post:
+      tags:
+      - film
+      summary: Update a film by id
+      description: Allow admin to update film
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film' # change
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Wrong data provided
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  
+  /film/delete:
+    delete:
+      tags:
+      - film
+      summary: Delete film by id
+      description: Allow admin to delete a film by id
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type:
+              integer
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: No film with that id
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  
+  /actor/get:
+    get:
+      tags:
+      - actor
+      summary: Get actor by id
+      description: Allow user to get actor with id specified in query
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Actor' # change
+        '401':
+          description: Unauthorized
+        '404':
+          description: Actor not found
+        '500':
+          description: Internal error
+  
+  /actor/get_with_films:
+    get:
+      tags:
+      - actor
+      summary: Get all actors with films
+      description: Allow user to get all actors with films
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorsWithFilms' # change
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  /actor/create:
+    put:
+      tags:
+      - actor
+      summary: Create new actor
+      description: Allow admin to create new film
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewActor' # change
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                    format: int32
+        '400':
+          description: Wrong data provided
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  /actor/update:
+    post:
+      tags:
+      - actor
+      summary: Update an actor
+      description: Allow admin to update info about the actor
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor' # change
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: No properties was changed
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+            
+  /actor/delete:
+    delete:
+      tags:
+      - actor
+      summary: Delete film
+      description: Allow admin to delete the actor
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type:
+              integer
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: No actor was found with that id
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+  
+  
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: Allow anybody to register in
+      
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    
+
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  
+        '400':
+          description: Invalid username/password supplied
+  
+components:
+  schemas:
+    Film:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int32
+        title:
+          type: string
+          example: "Titanic"
+        description:
+          type: string
+          example: "Good film"
+        release_date: 
+          type: string
+          format: date
+        rating:
+          type: integer
+          format: int8
+    NewFilm:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Titanic"
+        description:
+          type: string
+          example: "Good film"
+        release_date: 
+          type: string
+          format: date
+        rating:
+          type: integer
+          format: int8
+    Actor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          example: "Pavel Snezhok Volya"
+        birthday:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+           - male
+           - female
+    NewActor:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Pavel Snezhok Volya"
+        birthday:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+           - male
+           - female
+          
+    NewUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: login
+          example: "MyLogin"
+        email:
+          type: string
+          format: email
+          example: john@email.com
+        password:
+          type: string
+          format: password
+          example: '12345'
+    ActorsWithFilms:
+      type: array
+      items:
+        type: object
+        properties:
+          actor: 
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int32
+              name:
+                type: string
+                example: "Pavel Snezhok Volya"
+              birthday:
+                type: string
+                format: date
+              gender:
+                type: string
+                enum:
+                 - male
+                 - female
+          films:
+            type: array
+            items:
+              type: object
+              properties:
+                id: 
+                  type: integer
+                  format: int32
+                title:
+                  type: string
+                  example: "Titanic"
+                description:
+                  type: string
+                  example: "Good film"
+                release_date: 
+                  type: string
+                  format: date
+                rating:
+                  type: integer
+                  format: int8
