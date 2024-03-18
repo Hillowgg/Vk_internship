@@ -18,7 +18,7 @@ func (s *Service) IsAdmin(ctx context.Context, token string) bool {
 }
 func (s *Service) IsUser(ctx context.Context, token string) bool {
     _, err := s.GetSession(ctx, token)
-    logs.Log.Infow("checked session for user", "err", err)
+    logs.Log.Infow("checked session for user", "token", token)
     if err != nil {
         logs.Log.Errorw("failed to get session", "err", err)
         return false
