@@ -35,10 +35,10 @@ type IService interface {
 }
 
 type Service struct {
-    db database.Querier
+    db database.UserQuerierWithTx
 }
 
-func NewService(db database.Querier) *Service {
+func NewService(db database.UserQuerierWithTx) *Service {
     if db == nil {
         logs.Log.Fatal("Failed to create user serivce: db is nil")
     }

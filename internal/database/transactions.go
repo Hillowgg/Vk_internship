@@ -10,16 +10,6 @@ import (
     "github.com/jackc/pgx/v5/pgxpool"
 )
 
-type QuerierWithTx interface {
-    Querier
-    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
-    UpdateFilm(ctx context.Context, film map[string]any) error
-    UpdateActor(ctx context.Context, actor map[string]any) error
-    DeleteFilmById(ctx context.Context, id int32) error
-
-    DeleteActorById(ctx context.Context, id int32) error
-}
-
 func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error {
     conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
