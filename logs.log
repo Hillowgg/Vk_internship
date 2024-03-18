@@ -1,0 +1,3 @@
+{"level":"info","ts":1710783924.8881779,"caller":"app/app.go:39","msg":"Connected to database"}
+{"level":"info","ts":1710783924.88846,"caller":"app/app.go:45","msg":"Connected to cache"}
+{"level":"info","ts":1710783924.888598,"caller":"app/app.go:58","msg":"Starting server","host":":8080"}

@@ -12,12 +12,16 @@ func init() {
     var nonSugar *zap.Logger
     var err error
 
+    cfg := zap.NewProductionConfig()
+    cfg.OutputPaths = []string{"logs.log"}
+
     switch os.Getenv("log") {
     case "DEV":
         nonSugar, err = zap.NewDevelopment()
     default:
-        nonSugar, err = zap.NewProduction()
+        nonSugar, err = cfg.Build()
     }
+
     if err != nil {
         panic(err)
     }
