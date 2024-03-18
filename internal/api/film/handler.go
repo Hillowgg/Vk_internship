@@ -14,18 +14,18 @@ type Handler struct {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    endpoint := r.URL.Path
+    endpoint := r.Method + " " + r.URL.Path
     logs.Log.Infow("Request", "method", r.Method, "endpoint", endpoint)
     switch endpoint {
-    case "/film/get":
+    case "GET /film/get":
         h.mw.UserMiddleware(h.GetFilms)(w, r)
-    case "/film/search":
+    case "GET /film/search":
         h.mw.UserMiddleware(h.SearchByActorAndTitle)(w, r)
-    case "/film/create":
+    case "PUT /film/create":
         h.mw.AdminMiddleware(h.CreateFilm)(w, r)
-    case "/film/update":
+    case "POST /film/update":
         h.mw.AdminMiddleware(h.UpdateFilm)(w, r)
-    case "/film/delete":
+    case "DELETE /film/delete":
         h.mw.AdminMiddleware(h.DeleteFilm)(w, r)
     default:
         w.WriteHeader(http.StatusNotFound)

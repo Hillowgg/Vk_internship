@@ -16,17 +16,18 @@ func NewHandler(serv actor.IService, mw *middleware.Middleware) *Handler {
     return &Handler{serv: serv, mw: mw}
 }
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    endpoint := r.URL.Path
+    endpoint := r.Method + " " + r.URL.Path
+
     switch endpoint {
-    case "/actor/get":
+    case "GET /actor/get":
         h.mw.UserMiddleware(h.GetActor)(w, r)
-    case "/actor/get_with_films":
+    case "GET /actor/get_with_films":
         h.mw.UserMiddleware(h.GetActorsWithFilms)(w, r)
-    case "/actor/create":
+    case "PUT /actor/create":
         h.mw.AdminMiddleware(h.CreateActor)(w, r)
-    case "/actor/update":
+    case "POST /actor/update":
         h.mw.AdminMiddleware(h.UpdateActor)(w, r)
-    case "/actor/delete":
+    case "DELETE /actor/delete":
         h.mw.AdminMiddleware(h.DeleteActor)(w, r)
 
     default:

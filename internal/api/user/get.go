@@ -14,12 +14,9 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
         Login    string
         Password string
     }
-    err := json.NewDecoder(r.Body).Decode(&login)
-    if err != nil {
-        w.WriteHeader(http.StatusBadRequest)
-        logs.Log.Errorw("Failed to decode login", "err", err, "body", r.Body)
-        return
-    }
+    login.Login = r.URL.Query().Get("login")
+    login.Password = r.URL.Query().Get("password")
+
     u, err := h.userServ.CheckLoginCredentials(r.Context(), login.Login, login.Password)
     if errors.Is(err, user.WrongCredentials) {
         http.Error(w, "Wrong credentials", http.StatusUnauthorized)
