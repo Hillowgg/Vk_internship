@@ -3,6 +3,7 @@ package app
 import (
     "context"
     "net/http"
+    "os"
 
     "github.com/jackc/pgx/v5/pgxpool"
     "main/internal/api"
@@ -27,7 +28,7 @@ func NewApp() (*App, error) {
 
 func (a *App) initDataBase() {
     ctx := context.Background()
-    conn, err := pgxpool.New(ctx, "postgres://postgres:postgres@localhost:5432/internship")
+    conn, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
     if err != nil {
         logs.Log.Fatalw("Failed to connect to database", "err", err)
     }
@@ -50,6 +51,6 @@ func (a *App) Run() error {
     mux.Handle("/film/", a.api.Film)
     mux.Handle("/actor/", a.api.Actor)
     logs.Log.Infow("Starting server", "port", 8080)
-    err := http.ListenAndServe(":8080", mux)
+    err := http.ListenAndServe(":"+os.Getenv("PORT"), mux)
     return err
 }

@@ -2,6 +2,7 @@ package cache
 
 import (
     "context"
+    "os"
 
     redis2 "github.com/redis/go-redis/v9"
     "main/internal/logs"
@@ -17,7 +18,7 @@ type Cache struct {
 }
 
 func NewCache() *Cache {
-    opts, err := redis2.ParseURL("redis://127.0.0.1:6379")
+    opts, err := redis2.ParseURL(os.Getenv("REDIS_URL"))
     redis := redis2.NewClient(opts)
     if err != nil {
         logs.Log.Fatalw("Failed to connect to redis", "err", err)
