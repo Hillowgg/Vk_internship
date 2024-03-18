@@ -21,6 +21,8 @@ paths:
         - film
       summary: Returns all the films from database
       description: Return films by order specified in query
+      security:
+        - BasicAuth: [User]
       parameters:
         - in: query
           name: sortBy
@@ -63,6 +65,8 @@ paths:
         - film
       summary: Allow you to find film with specified actor
       description: You can find film using it's title and actor's name
+      security:
+        - BasicAuth: [ User ]
       parameters:
         - in: query
           name: actor
@@ -93,6 +97,8 @@ paths:
         - film
       summary: Create new film
       description: Allow admin to create new film
+      security:
+        - BasicAuth: [ Admin ]
       requestBody:
         description: Create a new pet in the store
         content:
@@ -122,6 +128,8 @@ paths:
         - film
       summary: Update a film by id
       description: Allow admin to update film
+      security:
+        - BasicAuth: [ Admin ]
       requestBody:
         description: Create a new pet in the store
         content:
@@ -144,6 +152,8 @@ paths:
         - film
       summary: Delete film by id
       description: Allow admin to delete a film by id
+      security:
+        - BasicAuth: [ Admin ]
       parameters:
         - in: query
           name: id
@@ -166,6 +176,8 @@ paths:
         - actor
       summary: Get actor by id
       description: Allow user to get actor with id specified in query
+      security:
+        - BasicAuth: [ User ]
       responses:
         '200':
           description: Successful operation
@@ -186,6 +198,8 @@ paths:
         - actor
       summary: Get all actors with films
       description: Allow user to get all actors with films
+      security:
+        - BasicAuth: [ User ]
       responses:
         '200':
           description: Successful operation
@@ -203,6 +217,8 @@ paths:
         - actor
       summary: Create new actor
       description: Allow admin to create new film
+      security:
+        - BasicAuth: [ Admin ]
       requestBody:
         description: Create a new pet in the store
         content:
@@ -232,6 +248,8 @@ paths:
         - actor
       summary: Update an actor
       description: Allow admin to update info about the actor
+      security:
+        - BasicAuth: [ Admin ]
       requestBody:
         description: Create a new pet in the store
         content:
@@ -254,6 +272,8 @@ paths:
         - actor
       summary: Delete film
       description: Allow admin to delete the actor
+      security:
+        - BasicAuth: [ Admin ]
       parameters:
         - in: query
           name: id
@@ -321,12 +341,6 @@ paths:
       responses:
         '200':
           description: successful operation
-          headers:
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
           content:
 
             application/json:
@@ -340,6 +354,10 @@ paths:
           description: Invalid username/password supplied
 
 components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: bearer
   schemas:
     Films:
       type: array
