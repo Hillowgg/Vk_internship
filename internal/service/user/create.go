@@ -28,9 +28,9 @@ func (s *Service) CreateUser(ctx context.Context, user *NewUser) (uuid.UUID, err
 
     err = s.db.AddUser(ctx, u)
     if err != nil {
-        logs.Log.Errorw("Failed to create user", "info", user, "err", err)
+        logs.Log.Errorw("Failed to create user", "info", u, "err", err)
         return [16]byte{}, err
     }
-    logs.Log.Infow("Created user", "info", user)
+    logs.Log.Infow("Created user", "info", u)
     return id, err
 }

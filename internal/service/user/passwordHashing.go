@@ -6,24 +6,24 @@ import (
     "fmt"
 )
 
-var saltSize = 64
+var saltSize = 32
 
-func generateRandomSalt() ([]byte, error) {
+func generateRandomSalt() (string, error) {
     var salt = make([]byte, saltSize)
 
     _, err := rand.Read(salt[:])
 
     if err != nil {
-        return nil, err
+        return "", err
     }
 
-    return salt, nil
+    return fmt.Sprintf("%x", salt), nil
 }
 
-func hashPassword(pass string, salt []byte) string {
-    passBytes := []byte(pass)
+func hashPassword(pass string, salt string) string {
+    bytes := []byte(pass + salt)
 
-    sum := sha256.Sum256(append(passBytes, salt...))
+    sum := sha256.Sum256(bytes)
     return fmt.Sprintf("%x", sum)
 }
 
@@ -33,10 +33,10 @@ func generateHashedPassword(pass string) (string, string, error) {
         return "", "", err
     }
     hash := hashPassword(pass, salt)
-    return hash, string(salt), err
+    return hash, salt, err
 }
 
 func checkPassword(pass, salt, hash string) bool {
-    right := hashPassword(pass, []byte(salt))
+    right := hashPassword(pass, salt)
     return hash == right
 }

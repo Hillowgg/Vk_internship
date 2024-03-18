@@ -9,54 +9,6 @@ import (
     "main/internal/service/user"
 )
 
-// func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
-//     id := r.Context().Value("userId").(uuid.UUID)
-//
-//     user, err := h.service.GetUser(r.Context(), id)
-//     if err != nil {
-//         w.WriteHeader(http.StatusInternalServerError)
-//         return
-//     }
-//     if user == nil {
-//         w.WriteHeader(http.StatusNotFound)
-//         return
-//     }
-//     w.WriteHeader(http.StatusOK)
-//     err = json.NewEncoder(w).Encode(user)
-//     if err != nil {
-//         w.WriteHeader(http.StatusInternalServerError)
-//         logs.Log.Errorw("Failed to encode user", "err", err)
-//         return
-//     }
-// }
-
-// Register,
-
-func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
-    var newUser user.NewUser
-    err := json.NewDecoder(r.Body).Decode(&newUser)
-    newUser.IsAdmin = false
-
-    if err != nil {
-        w.WriteHeader(http.StatusBadRequest)
-        logs.Log.Errorw("Failed to decode user", "err", err)
-        return
-    }
-    id, err := h.userServ.CreateUser(r.Context(), &newUser)
-    if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        logs.Log.Errorw("Failed to create user", "err", err)
-        return
-    }
-    w.WriteHeader(http.StatusOK)
-    err = json.NewEncoder(w).Encode(id)
-    if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        logs.Log.Errorw("Failed to encode user", "err", err)
-        return
-    }
-}
-
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
     var login struct {
         Login    string
