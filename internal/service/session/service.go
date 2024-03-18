@@ -5,6 +5,7 @@ import (
 
     "github.com/google/uuid"
     "main/internal/cache"
+    "main/internal/logs"
 )
 
 // IService is an interface for session service
@@ -22,6 +23,10 @@ type Service struct {
 
 // NewService creates a new session service
 func NewService(cache cache.ICache) *Service {
+    if cache == nil {
+        logs.Log.Fatal("Failed to create session serivce: cache is nil")
+        return nil
+    }
     return &Service{cache: cache}
 }
 

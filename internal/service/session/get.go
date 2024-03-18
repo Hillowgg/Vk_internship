@@ -2,7 +2,9 @@ package session
 
 import (
     "context"
+    "errors"
 
+    "github.com/redis/go-redis/v9"
     "main/internal/cache"
     "main/internal/logs"
 )
@@ -28,5 +30,14 @@ func (s *Service) IsUser(ctx context.Context, token string) bool {
 
 func (s *Service) GetSession(ctx context.Context, token string) (*cache.Session, error) {
     logs.Log.Infow("getting session", "token", token)
-    return s.cache.GetSession(ctx, token)
+    ses, err := s.cache.GetSession(ctx, token)
+    if errors.Is(err, redis.Nil) {
+        logs.Log.Infow("session not found", "token", token)
+        return nil, nil
+    }
+    if err != nil {
+        logs.Log.Errorw("failed to get session", "token", token, "err", err)
+        return nil, err
+    }
+    return ses, nil
 }

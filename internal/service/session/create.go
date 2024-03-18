@@ -22,8 +22,9 @@ func (s *Service) CreateSession(ctx context.Context, id uuid.UUID, isAdmin bool)
     token, _ := randomHex(20)
     session := cache.Session{UserID: id, IsAdmin: isAdmin}
     err := s.cache.NewSession(ctx, token, session)
+
     if err != nil {
-        logs.Log.Errorw("failed to create session", "err", err)
+        logs.Log.Infow("failed to create session", "err", err)
         return "", err
     }
     logs.Log.Infow("created session", "token", token)
