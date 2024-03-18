@@ -44,7 +44,7 @@ func TestService_GetUser(t *testing.T) {
     // write test for GetUser
     db := new(mockDB)
     s := NewService(db)
-    u := &User{}
+    u := &database.User{}
     db.On("GetUserById", mock.Anything, mock.Anything).Return(u, nil)
     _, err := s.GetUser(context.Background(), uuid.New())
     if err != nil {
