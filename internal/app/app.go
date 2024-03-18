@@ -32,6 +32,10 @@ func (a *App) initDataBase() {
     if err != nil {
         logs.Log.Fatalw("Failed to connect to database", "err", err)
     }
+    err = conn.Ping(context.Background())
+    if err != nil {
+        logs.Log.Fatalw("Failed to ping database", "err", err)
+    }
     logs.Log.Infow("Connected to database")
     a.db = database.New(conn)
 }
@@ -50,7 +54,8 @@ func (a *App) Run() error {
     mux.Handle("/user/", a.api.User)
     mux.Handle("/film/", a.api.Film)
     mux.Handle("/actor/", a.api.Actor)
-    logs.Log.Infow("Starting server", "port", 8080)
-    err := http.ListenAndServe(":"+os.Getenv("PORT"), mux)
+    host := ":" + os.Getenv("PORT")
+    logs.Log.Infow("Starting server", "host", host)
+    err := http.ListenAndServe(host, mux)
     return err
 }

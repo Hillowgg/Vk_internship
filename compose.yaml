@@ -1,0 +1,67 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/compose/compose-file/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    image: intern
+    restart: always
+    build:
+      context: .
+      target: final
+    env_file:
+      - .env
+    ports:
+      - 80:80
+    expose:
+      - 80
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  db:
+    container_name: postgres
+    image: postgres
+    restart: always
+    user: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=internship
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - ./tools/sqlc/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  cache:
+    container_name: redis
+    image: redis
+    restart: always
+    expose:
+      - 6379
+    ports:
+        - 6379:6379
+    healthcheck:
+        test: [ "CMD", "redis-cli", "ping" ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+# volumes:
+#   db-data:
+# secrets:
+#   db-password:
+#     file: db/password.txt
+
