@@ -396,6 +396,11 @@ components:
         rating:
           type: integer
           format: int8
+        actors:
+            type: array
+            items:
+                type: integer
+            example: [1, 2]
     Actor:
       type: object
       properties:

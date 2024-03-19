@@ -18,13 +18,13 @@ func (s *Service) CreateFilm(ctx context.Context, film *NewFilm) (int32, error) 
 }
 
 // TODO: add returning id
-func (s *Service) CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) error {
-    err := s.db.AddFilmWithActors(ctx, newFilmToDbFilm(film), actors)
+func (s *Service) CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) (int32, error) {
+    id, err := s.db.AddFilmWithActors(ctx, newFilmToDbFilm(film), actors)
     if err != nil {
         logs.Log.Errorw("Failed to create film with actors",
             "filmInfo", film, "actorIds", actors, "err", err)
-        return err
+        return 0, err
     }
     logs.Log.Infow("Created film with actors")
-    return nil
+    return id, nil
 }

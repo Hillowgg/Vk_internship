@@ -10,25 +10,25 @@ import (
     "github.com/jackc/pgx/v5/pgxpool"
 )
 
-func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error {
+func (q *Queries) AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) (int32, error) {
     conn := q.db.(*pgxpool.Pool)
     tx, err := conn.BeginTx(ctx, pgx.TxOptions{})
     if err != nil {
-        return err
+        return 0, err
     }
     defer tx.Rollback(ctx)
     qtx := q.WithTx(tx)
     filmId, err := qtx.AddFilm(ctx, film)
     if err != nil {
-        return err
+        return 0, err
     }
     for _, id := range ids {
         err = qtx.AddActorToFilm(ctx, &AddActorToFilmParams{id, filmId})
         if err != nil {
-            return err
+            return 0, err
         }
     }
-    return tx.Commit(ctx)
+    return filmId, tx.Commit(ctx)
 }
 
 type OptUpdateFilm struct {

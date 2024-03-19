@@ -29,7 +29,7 @@ type IService interface {
     SearchFilmByActor(ctx context.Context, title string, actorName string) (*Film, error)
 
     CreateFilm(ctx context.Context, film *NewFilm) (int32, error)
-    CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) error
+    CreateFilmWithActors(ctx context.Context, film *NewFilm, actors []int32) (int32, error)
     UpdateFilm(ctx context.Context, film map[string]any) error
 
     DeleteFilm(ctx context.Context, id int32) error

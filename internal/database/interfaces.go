@@ -27,7 +27,7 @@ type ActorQuerierWithTx interface {
 
 type FilmQuerierWithTx interface {
     AddFilm(ctx context.Context, arg *AddFilmParams) (int32, error)
-    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
+    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) (int32, error)
     GetFilmById(ctx context.Context, id int32) (*Film, error)
     GetFilmsASCRating(ctx context.Context) ([]*Film, error)
     GetFilmsASCReleaseDate(ctx context.Context) ([]*Film, error)
