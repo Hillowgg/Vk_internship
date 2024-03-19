@@ -30,9 +30,9 @@ paths:
             type:
               string
             enum:
-              - rating
-              - title
-              - release_date
+              - Rating
+              - Title
+              - ReleaseDate
 
             required: false
         - in: query
@@ -64,7 +64,7 @@ paths:
       tags:
         - film
       summary: Allow you to find film with specified actor
-      description: You can find film using it's title and actor's name
+      description: You can find film using it's Title and actor's Name
       security:
         - BasicAuth: [ User ]
       parameters:
@@ -74,7 +74,7 @@ paths:
             type:
               string
         - in: query
-          name: title
+          name: Title
           schema:
             type:
               string
@@ -113,11 +113,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
+                  Id:
                     type: integer
                     format: int32
         '400':
-          description: One or more parameters weren't provided
+          description: One or more parameters weren't provIded
         '401':
           description: Unauthorized
         '500':
@@ -126,7 +126,7 @@ paths:
     post:
       tags:
         - film
-      summary: Update a film by id
+      summary: Update a film by Id
       description: Allow admin to update film
       security:
         - BasicAuth: [ Admin ]
@@ -140,7 +140,7 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Wrong data provided
+          description: Wrong data provIded
         '401':
           description: Unauthorized
         '500':
@@ -150,13 +150,13 @@ paths:
     delete:
       tags:
         - film
-      summary: Delete film by id
-      description: Allow admin to delete a film by id
+      summary: Delete film by Id
+      description: Allow admin to delete a film by Id
       security:
         - BasicAuth: [ Admin ]
       parameters:
         - in: query
-          name: id
+          name: Id
           schema:
             type:
               integer
@@ -164,7 +164,7 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: No film with that id
+          description: No film with that Id
         '401':
           description: Unauthorized
         '500':
@@ -174,8 +174,8 @@ paths:
     get:
       tags:
         - actor
-      summary: Get actor by id
-      description: Allow user to get actor with id specified in query
+      summary: Get actor by Id
+      description: Allow user to get actor with Id specified in query
       security:
         - BasicAuth: [ User ]
       responses:
@@ -233,11 +233,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
+                  Id:
                     type: integer
                     format: int32
         '400':
-          description: Wrong data provided
+          description: Wrong data provIded
         '401':
           description: Unauthorized
         '500':
@@ -276,7 +276,7 @@ paths:
         - BasicAuth: [ Admin ]
       parameters:
         - in: query
-          name: id
+          name: Id
           schema:
             type:
               integer
@@ -284,7 +284,7 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: No actor was found with that id
+          description: No actor was found with that Id
         '401':
           description: Unauthorized
         '500':
@@ -313,9 +313,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
+                  Id:
                     type: string
-                    format: uuid
+                    format: uuId
 
 
   /user/login:
@@ -323,12 +323,12 @@ paths:
       tags:
         - user
       summary: Logs user into the system
-      description: ''
+      description: 'Login'
       operationId: loginUser
       parameters:
-        - name: username
+        - name: userName
           in: query
-          description: The user name for login
+          description: The user Name for login
           required: false
           schema:
             type: string
@@ -351,7 +351,7 @@ paths:
                     type: string
 
         '400':
-          description: Invalid username/password supplied
+          description: InvalId userName/password supplied
 
 components:
   securitySchemes:
@@ -366,34 +366,34 @@ components:
     Film:
       type: object
       properties:
-        id:
+        Id:
           type: integer
           format: int32
-        title:
+        Title:
           type: string
           example: "Titanic"
-        description:
+        Description:
           type: string
           example: "Good film"
-        release_date:
+        ReleaseDate:
           type: string
           format: date
-        rating:
+        Rating:
           type: integer
           format: int8
     NewFilm:
       type: object
       properties:
-        title:
+        Title:
           type: string
           example: "Titanic"
-        description:
+        Description:
           type: string
           example: "Good film"
-        release_date:
+        ReleaseDate:
           type: string
           format: date
-        rating:
+        Rating:
           type: integer
           format: int8
         actors:
@@ -404,16 +404,16 @@ components:
     Actor:
       type: object
       properties:
-        id:
+        Id:
           type: integer
           format: int32
-        name:
+        Name:
           type: string
           example: "Pavel Snezhok Volya"
-        birthday:
+        Birthday:
           type: string
           format: date
-        gender:
+        Gender:
           type: string
           enum:
             - male
@@ -421,13 +421,13 @@ components:
     NewActor:
       type: object
       properties:
-        name:
+        Name:
           type: string
           example: "Pavel Snezhok Volya"
-        birthday:
+        Birthday:
           type: string
           format: date
-        gender:
+        Gender:
           type: string
           enum:
             - male
@@ -436,7 +436,7 @@ components:
     NewUser:
       type: object
       properties:
-        id:
+        Id:
           type: string
           format: login
           example: "MyLogin"
@@ -456,16 +456,16 @@ components:
           actor:
             type: object
             properties:
-              id:
+              Id:
                 type: integer
                 format: int32
-              name:
+              Name:
                 type: string
                 example: "Pavel Snezhok Volya"
-              birthday:
+              Birthday:
                 type: string
                 format: date
-              gender:
+              Gender:
                 type: string
                 enum:
                   - male
@@ -475,18 +475,18 @@ components:
             items:
               type: object
               properties:
-                id:
+                Id:
                   type: integer
                   format: int32
-                title:
+                Title:
                   type: string
                   example: "Titanic"
-                description:
+                Description:
                   type: string
                   example: "Good film"
-                release_date:
+                ReleaseDate:
                   type: string
                   format: date
-                rating:
+                Rating:
                   type: integer
                   format: int8

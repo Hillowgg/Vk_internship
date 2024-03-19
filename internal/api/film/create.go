@@ -14,15 +14,15 @@ import (
 
 func validateNewFilm(bytes []byte) (*film.NewFilm, []int32, error) {
     json := gjson.ParseBytes(bytes)
-    date, err := time.Parse("2006-01-02", json.Get("release_date").String())
+    date, err := time.Parse("2006-01-02", json.Get("ReleaseDate").String())
     if err != nil {
         return nil, nil, err
     }
     f := &film.NewFilm{
-        Title:       json.Get("title").String(),
-        Description: json.Get("description").String(),
+        Title:       json.Get("Title").String(),
+        Description: json.Get("Description").String(),
         ReleaseDate: date,
-        Rating:      int8(json.Get("rating").Int()),
+        Rating:      int8(json.Get("Rating").Int()),
     }
     actors := json.Get("actors").Array()
     actorsIds := make([]int32, 0, len(actors))
