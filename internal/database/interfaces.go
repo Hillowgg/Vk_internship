@@ -10,7 +10,7 @@ type QuerierWithTx interface {
     Querier
     UpdateActor(ctx context.Context, actor map[string]any) error
     DeleteActorById(ctx context.Context, id int32) error
-    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) error
+    AddFilmWithActors(ctx context.Context, film *AddFilmParams, ids []int32) (int32, error)
     UpdateFilm(ctx context.Context, film map[string]any) error
     DeleteFilmById(ctx context.Context, id int32) error
 }
